@@ -1,0 +1,25 @@
+{
+    "ui_settings": {
+        "tooltips": {
+            "marker_tooltip_format": "({name})(<br>{power}W)(<br>COP: {COP})(<br>Eff: {efficiency})",
+            "line_tooltip_format": "({name})( - {diameter})( - {power}W)( - {capacity})",
+            "show_asset_information_on_map": false
+        },
+        "asset_bar": {
+            "visible_on_startup": true
+        },
+        "services_toolbar": {
+            "visible_on_startup": true
+        },
+        "spatial_buffers": {
+            "visible_on_startup": false,
+            "colors": {
+                "RISK": "#ff0000",
+                "ENVIRONMENT": "#00ff00",
+                "NOISE": "#0000ff",
+                "PARTICULATE_MATTER": "#000000",
+                "NOX_EMISSIONS": "#ffff00"
+            }
+        }
+    }
+}
