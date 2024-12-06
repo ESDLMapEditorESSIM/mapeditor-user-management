@@ -1,0 +1,336 @@
+[
+    {
+        "id": "18d106cf-2af1-407d-8697-0dae23a0ac3e",
+        "name": "Get PICO wind potential",
+        "explanation": "This queries the Geodan wind potential service for a certain area",
+        "url": "https://pico.geodan.nl/pico/api/v1/<area_scope>/<area_id>/windturbinegebied",
+        "http_method": "get",
+        "headers": {
+            "Accept": "application/esdl+xml",
+            "User-Agent": "ESDL Mapeditor/0.1"
+        },
+        "type": "geo_query",
+        "result": [
+            {
+                "code": 200,
+                "action": "esdl"
+            }
+        ],
+        "geographical_scope": {
+            "url_area_scope": "<area_scope>",
+            "url_area_id": "<area_id>",
+            "area_scopes": [
+                {
+                    "scope": "PROVINCE",
+                    "url_value": "provincies"
+                },
+                {
+                    "scope": "REGION",
+                    "url_value": "resgebieden"
+                },
+                {
+                    "scope": "MUNICIPALITY",
+                    "url_value": "gemeenten"
+                }
+            ]
+        },
+        "query_parameters": [
+            {
+                "name": "Distance to buildings",
+                "description": "Minimum distance to the built environment (in meters)",
+                "parameter_name": "bebouwingsafstand",
+                "type": "integer"
+            },
+            {
+                "name": "Restriction",
+                "description": "",
+                "parameter_name": "restrictie",
+                "type": "multi-selection",
+                "possible_values": [
+                    "natuur",
+                    "vliegveld",
+                    "infrastructuur",
+                    "agrarisch",
+                    "turbines"
+                ]
+            },
+            {
+                "name": "Preference",
+                "description": "",
+                "parameter_name": "preferentie",
+                "type": "multi-selection",
+                "possible_values": [
+                    "natuur",
+                    "vliegveld",
+                    "infrastructuur",
+                    "agrarisch",
+                    "turbines"
+                ]
+            },
+            {
+                "name": "Include geometry in ESDL",
+                "description": "",
+                "parameter_name": "geometrie",
+                "type": "boolean"
+            }
+        ]
+    },
+    {
+        "id": "50fa716f-f3b0-464c-bf9f-1acffb24f76a",
+        "name": "Get PICO solar field potential",
+        "explanation": "This queries the Geodan solar field potential service for a certain area",
+        "url": "https://pico.geodan.nl/pico/api/v1/<area_scope>/<area_id>/zonneveldgebied",
+        "http_method": "get",
+        "headers": {
+            "Accept": "application/esdl+xml",
+            "User-Agent": "ESDL Mapeditor/0.1"
+        },
+        "type": "geo_query",
+        "result": [
+            {
+                "code": 200,
+                "action": "esdl"
+            }
+        ],
+        "geographical_scope": {
+            "url_area_scope": "<area_scope>",
+            "url_area_id": "<area_id>",
+            "area_scopes": [
+                {
+                    "scope": "PROVINCE",
+                    "url_value": "provincies"
+                },
+                {
+                    "scope": "REGION",
+                    "url_value": "resgebieden"
+                },
+                {
+                    "scope": "MUNICIPALITY",
+                    "url_value": "gemeenten"
+                }
+            ]
+        },
+        "query_parameters": [
+            {
+                "name": "Distance to buildings (m)",
+                "description": "Minimum distance to the built environment (in meters)",
+                "parameter_name": "bebouwingsafstand",
+                "type": "integer"
+            },
+            {
+                "name": "Restriction",
+                "description": "",
+                "parameter_name": "restrictie",
+                "type": "multi-selection",
+                "possible_values": [
+                    "natuur",
+                    "vliegveld",
+                    "infrastructuur",
+                    "agrarisch",
+                    "turbines"
+                ]
+            },
+            {
+                "name": "Preference",
+                "description": "",
+                "parameter_name": "preferentie",
+                "type": "multi-selection",
+                "possible_values": [
+                    "natuur",
+                    "vliegveld",
+                    "infrastructuur",
+                    "agrarisch",
+                    "turbines"
+                ]
+            },
+            {
+                "name": "Include geometry in ESDL",
+                "description": "",
+                "parameter_name": "geometrie",
+                "type": "boolean"
+            }
+        ]
+    },
+    {
+        "id": "c1c209e9-67ff-4201-81f6-0dd7a185ff06",
+        "name": "Get PICO rooftop solar potential",
+        "explanation": "This queries the Geodan rooftop solar potential service for a certain area",
+        "url": "https://pico.geodan.nl/pico/api/v1/<area_scope>/<area_id>/zonopdak?geometrie=false",
+        "http_method": "get",
+        "headers": {
+            "Accept": "application/esdl+xml",
+            "User-Agent": "ESDL Mapeditor/0.1"
+        },
+        "type": "geo_query",
+        "result": [
+            {
+                "code": 200,
+                "action": "esdl"
+            }
+        ],
+        "geographical_scope": {
+            "url_area_scope": "<area_scope>",
+            "url_area_id": "<area_id>",
+            "area_scopes": [
+                {
+                    "scope": "PROVINCE",
+                    "url_value": "provincies"
+                },
+                {
+                    "scope": "REGION",
+                    "url_value": "resgebieden"
+                },
+                {
+                    "scope": "MUNICIPALITY",
+                    "url_value": "gemeenten"
+                }
+            ]
+        },
+        "query_parameters": []
+    },
+    {
+        "id": "42c584b1-43c1-4369-9001-c89ba80d8370",
+        "name": "Get PICO Startanalyse results",
+        "explanation": "This queries the Geodan start analyse service for a certain area",
+        "url": "https://pico.geodan.nl/pico/api/v1/<area_scope>/<area_id>/startanalyse",
+        "http_method": "get",
+        "headers": {
+            "Accept": "application/esdl+xml",
+            "User-Agent": "ESDL Mapeditor/0.1"
+        },
+        "type": "geo_query",
+        "result": [
+            {
+                "code": 200,
+                "action": "esdl"
+            }
+        ],
+        "geographical_scope": {
+            "url_area_scope": "<area_scope>",
+            "url_area_id": "<area_id>",
+            "area_scopes": [
+                {
+                    "scope": "MUNICIPALITY",
+                    "url_value": "gemeenten"
+                },
+                {
+                    "scope": "NEIGHBOURHOOD",
+                    "url_value": "buurt"
+                }
+            ]
+        },
+        "query_parameters": [
+            {
+                "name": "Strategie",
+                "description": "",
+                "parameter_name": "strategie",
+                "type": "selection",
+                "possible_values": [
+                    "S1a",
+                    "S1b",
+                    "S2a",
+                    "S2b",
+                    "S2c",
+                    "S2d",
+                    "S3a",
+                    "S3b",
+                    "S3c",
+                    "S3d",
+                    "S4a",
+                    "S5a"
+                ]
+            }
+        ]
+    },
+    {
+        "id": "7f8722a9-669c-499d-8d75-4a1960e0429f",
+        "name": "Create ETM scenario",
+        "explanation": "This service sends the ESDL information to the ETM and tries to generate an ETM scenario out of it.",
+        "url": "http://beta-esdl.energytransitionmodel.com/api/v1/EnergySystem/",
+        "http_method": "post",
+        "headers": {
+            "Content-Type": "application/x-www-form-urlencoded"
+        },
+        "type": "send_esdl",
+        "body": "url_encoded",
+        "send_email_in_post_body_parameter": "account",
+        "query_parameters": [
+            {
+                "name": "Environment",
+                "description": "",
+                "parameter_name": "environment",
+                "location": "body",
+                "type": "selection",
+                "possible_values": [
+                    "pro",
+                    "beta"
+                ]
+            }
+        ],
+        "result": [
+            {
+                "code": 200,
+                "action": "print"
+            }
+        ]
+    },
+    {
+        "id": "912c4a2b-8eee-46f7-a225-87c5f85e645f",
+        "name": "ESDL Validator",
+        "explanation": "This service allows you validate an ESDL against a certain schema",
+        "type": "vueworkflow",
+        "workflow": [
+            {
+                "name": "Select schema",
+                "description": "",
+                "type": "select-query",
+                "multiple": false,
+                "source": {
+                    "url": "http://10.30.2.1:3011/schema",
+                    "http_method": "get",
+                    "label_fields": [
+                        "name"
+                    ],
+                    "value_field": "id"
+                },
+                "target_variable": "schema",
+                "next_step": 1
+            },
+            {
+                "name": "Schema validation",
+                "description": "",
+                "type": "service",
+                "state_params": {
+                    "schemas": "schema.id"
+                },
+                "service": {
+                    "id": "64c9d1a2-c92a-46ed-a7e4-9931971cbb27",
+                    "name": "Validate ESDL against scehema",
+                    "headers": {
+                        "User-Agent": "ESDL Mapeditor/0.1",
+                        "Content-Type": "application/xml"
+                    },
+                    "url": "http://10.30.2.1:3011/validationToMessages/",
+                    "http_method": "post",
+                    "type": "send_esdl",
+                    "query_parameters": [
+                        {
+                            "name": "Schemas",
+                            "description": "ID of the schema to validate this ESDL against",
+                            "parameter_name": "schemas"
+                        }
+                    ],
+                    "body": "",
+                    "result": [
+                        {
+                            "code": 200,
+                            "action": "asset_feedback"
+                        }
+                    ],
+                    "with_jwt_token": false,
+                    "state_params": true
+                }
+            }
+        ]
+    }
+]

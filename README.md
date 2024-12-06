@@ -13,7 +13,7 @@ For adding new users to the ESDL MapEditor or updating settings for existing use
    or for windows create and activate venv (Python 3.12) followed by:
 
    ```
-   pip install piptools
+   pip install setuptools
    pip install -r ./requirements.txt
    ```
 
@@ -31,7 +31,9 @@ For adding new users to the ESDL MapEditor or updating settings for existing use
     ```bash
     ./run.sh
     ```
-   or `main.py` directly.
+   or run `main.py` directly from working directory
+   `C:/Users/vrijlandtmaw/code/nwn/mapeditor-user-management/`, in PyCharm mark the `src` folder as
+   `Sources Root`.
 
 ### Not committed users/config
 
