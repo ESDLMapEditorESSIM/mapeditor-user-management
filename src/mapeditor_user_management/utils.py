@@ -69,33 +69,33 @@ def setup_arg_parser() -> argparse.Namespace:
         "-u", "--users-from-csv", default=os.environ.get("USERS_FROM_CSV")
     )
     parser_add.add_argument(
-        "-vmn",
-        "--view-modes-name",
-        default=os.environ.get("VIEW_MODES_USER_CONFIG_NAME"),
+        "-mccn",
+        "--model-contexts-config-name",
+        default=os.environ.get("MAPEDITOR_MODEL_CONTEXTS_CONFIG_NAME"),
     )
     parser_add.add_argument(
-        "-vmf",
-        "--view-modes-file",
-        default=os.environ.get("VIEW_MODES_USER_CONFIG_DEFAULT_FILE"),
+        "-mccf",
+        "--model-contexts-config-file",
+        default=os.environ.get("MAPEDITOR_MODEL_CONTEXTS_DEFAULT_FILE"),
     )
     parser_add.add_argument(
-        "-esn",
-        "--esdl-services-name",
+        "-escn",
+        "--esdl-services-config-name",
         default=os.environ.get("ESDL_SERVICES_CONFIG_NAME"),
     )
     parser_add.add_argument(
-        "-esf",
-        "--esdl-services-file",
+        "-escf",
+        "--esdl-services-config-file",
         default=os.environ.get("ESDL_SERVICES_CONFIG_DEFAULT_FILE"),
     )
     parser_add.add_argument(
-        "-mcn",
-        "--mapeditor-config-name",
+        "-mucn",
+        "--mapeditor-user-config-name",
         default=os.environ.get("MAPEDITOR_USER_CONFIG_NAME"),
     )
     parser_add.add_argument(
-        "-mcf",
-        "--mapeditor-config-file",
+        "-mucf",
+        "--mapeditor-user-config-file",
         default=os.environ.get("MAPEDITOR_USER_CONFIG_DEFAULT_FILE"),
     )
 
