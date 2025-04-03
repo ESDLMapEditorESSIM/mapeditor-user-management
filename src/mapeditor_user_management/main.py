@@ -33,9 +33,9 @@ def main():
                 keycloak_admin.add_user_to_keycloak(user)
 
                 default_config_dict = {
-                    args.view_modes_name: args.view_modes_file,
-                    args.esdl_services_name: args.esdl_services_file,
-                    args.mapeditor_config_name: args.mapeditor_config_file,
+                    args.model_contexts_config_name: args.model_contexts_config_file,
+                    args.esdl_services_config_name: args.esdl_services_config_file,
+                    args.mapeditor_user_config_name: args.mapeditor_user_config_file,
                 }
                 for settings_name, settings_file in default_config_dict.items():
                     with open(settings_file, "r") as open_file:
@@ -44,8 +44,8 @@ def main():
                         user.email, settings_name, json.loads(settings_value_string)
                     )
         print(
-            f"Added users with config: '{args.view_modes_file}', '{args.esdl_services_file}'"
-            f", '{args.mapeditor_config_file}'"
+            f"Added users with config: '{args.model_contexts_config_file}', '{args.esdl_services_config_file}'"
+            f", '{args.mapeditor_user_config_file}'"
         )
     elif args.mode == "edit-users-settings":
         with open(args.setting_value_file, "r") as open_file:
