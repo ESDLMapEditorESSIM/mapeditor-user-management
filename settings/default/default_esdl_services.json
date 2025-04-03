@@ -653,7 +653,6 @@
         "description": "",
         "type": "table-external-model",
         "config": {
-          "external_model": "essim",
           "model_short_name": "essim",
           "has_feedback_messages": false,
           "result_animation": {
@@ -667,6 +666,7 @@
             "value_database_key": "model_specific_output.dashboardURL"
           },
           "delete_result_url": "",
+          "load_input_esdl": true,
           "time_series_xlsx_download": {
             "filter_on_tag": {
               "tag_name": "simulationRun",

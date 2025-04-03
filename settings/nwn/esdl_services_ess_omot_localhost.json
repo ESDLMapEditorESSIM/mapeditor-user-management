@@ -410,7 +410,6 @@
         "description": "",
         "type": "table-external-model",
         "config": {
-          "external_model": "essim",
           "model_short_name": "essim",
           "has_feedback_messages": false,
           "result_animation": {
@@ -695,13 +694,13 @@
         "description": "",
         "type": "table-external-model",
         "config": {
-          "external_model": "omotes",
           "model_short_name": "omotes",
           "result_animation": {
             "influxdb_host_override": "localhost"
           },
           "has_feedback_messages": true,
           "delete_result_url": "http://localhost:9200/job/<MODEL_JOB_ID>",
+          "load_input_esdl": true,
           "time_series_xlsx_download": {
             "esdl_object_name_field": "assetName",
             "excel_sheets_per_table": [
