@@ -1,0 +1,106 @@
+[
+  {
+    "id": "8aeb192d-5144-4c76-9f5e-c551f40ef612",
+    "name": "Get DOWA based wind profile",
+    "type": "workflow",
+    "location": "asset_context_menu",
+    "options": {
+      "send_esdl": true
+    },
+    "headers": {
+      "Accept": "application/esdl+xml",
+      "User-Agent": "ESDL Mapeditor/0.1"
+    },
+    "workflow": [
+      {
+        "id": "dowa_service",
+        "type": "composite",
+        "config": {
+          "step_ids": [
+            "extra_service_options",
+            "call_windturbine_service"
+          ]
+        },
+        "next_step": "dowa_service"
+      },
+      {
+        "id": "extra_service_options",
+        "name": "",
+        "type": "json-form2",
+        "data": {
+          "from_config": {
+            "schema": {
+              "title": "Extra service options",
+              "description": "Please give some additional configuration",
+              "type": "object",
+              "properties": {
+                "year": {
+                  "title": "Year (between 2008 and 2017)",
+                  "description": "For what year do you want the wind profiles (between 2008 and 2017)?",
+                  "type": "integer",
+                  "minimum": 2008,
+                  "maximum": 2017
+                }
+              },
+              "required": [
+                "year"
+              ]
+            }
+          },
+          "to_state": {}
+        },
+        "next_step": "dowa_service",
+        "next_step_trigger": "input_change"
+      },
+      {
+        "id": "call_windturbine_service",
+        "name": "",
+        "type": "esdl-service",
+        "button_text": "Call Windturbine service",
+        "config": {
+          "state_params": {
+            "esdl": "esdl",
+            "year": "year"
+          }
+        },
+        "service": {
+          "id": "64c9d1a2-c92a-46ed-a7e4-9931971caa18",
+          "name": "Call service",
+          "description": "",
+          "headers": {
+            "User-Agent": "ESDL Mapeditor/0.1",
+            "Content-Type": "application/json"
+          },
+          "url": "http://dowa-windturbine-service:8301/api/query/",
+          "http_method": "post",
+          "type": "json",
+          "query_parameters": [
+            {
+              "name": "esdl",
+              "location": "body",
+              "encoding": "base64",
+              "parameter_name": "esdl"
+            },
+            {
+              "name": "year",
+              "description": "Year",
+              "location": "body",
+              "parameter_name": "year"
+            }
+          ],
+          "body": "json_text",
+          "result": [
+            {
+              "code": 200,
+              "action": "add_profile"
+            }
+          ],
+          "with_jwt_token": false,
+          "state_params": true
+        },
+        "previous_step": "extra_service_options",
+        "next_step": "dowa_service"
+      }
+    ]
+  }
+]

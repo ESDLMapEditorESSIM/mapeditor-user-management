@@ -41,28 +41,31 @@ The folder `settings_not_committed` can be used to store confidential user list/
 
 ## Description
 
+Below a description of the two modes: `add-users` and `edit-users-config`. See `.env.template` for more info on the
+config parameters.
+
 ### add-users
 
-The tool will add the necessary account to keycloak and set the necessary settings to mongodb for a
-specified list of
-users.
+Add a specified list of users: create keycloak users, add optional keycloak roles and groups and set mapeditor settings
+in mongodb.
 
 ### edit-users-config
 
-A settings name (SETTING_NAME) and settings value json (SETTINGS_VALUE_FILE) are needed. There are
-three ways
-(EDIT_MODE) in which the config of the users can be edited:
+Edit settings (keycloak and/or mapeditor) for a list of users, or all users.
+There are three ways (EDIT_MODE) in which the config of the users can be edited:
 
-1. 'update'  
-   The data in the json will be added, if not already present, to the current config of each
+1. `update`  
+   Keycloak groups and roles will be added.
+   For mapeditor settings the data in the json will be added, if not already present, to the current config of each
    user.   
-   Caveat for lists: the whole list will be replaced (is it not possible to distinguish between
-   adding a new item or
+   Caveat for lists: the whole list will be replaced (is it not possible to distinguish between adding a new item or
    updating an existing one).
-2. 'overwrite'  
-   The config for all users will be overwritten by the json
-3. 'delete'
-   The json items whose value is not a dictionary will be deleted (only the deepest item will be
+2. `overwrite`  
+   Keycloak groups and roles will be added.
+   The mapeditor config for all users will be overwritten by the supplied json
+3. `delete`  
+   Keycloak groups and roles will be deleted.
+   For mapeditor settings: the json items whose value is not a dictionary will be deleted (only the deepest item will be
    deleted).  
    To delete a higher level item change the value of the item to a string.
    Caveat for lists: it is not possible to remove specific list items.
