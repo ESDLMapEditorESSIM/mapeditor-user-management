@@ -3,22 +3,26 @@ import csv
 import os
 import sys
 from typing import Dict, Any, TypeVar
-from mapeditor_user_management.user import User
+from mapeditor_user_management.constants import User
 
-KeyType = TypeVar('KeyType')
+KeyType = TypeVar("KeyType")
 
 
 # Code copy from pydantic:
 #   - avoid importing big library
 #   - deep_update is in v1, not part of v2 and v3, might be deprecated
 # https://github.com/pydantic/pydantic/blob/fd2991fe6a73819b48c906e3c3274e8e47d0f761/pydantic/utils.py#L200
-def deep_update(mapping: Dict[KeyType, Any], *updating_mappings: Dict[KeyType, Any]) -> Dict[
-    KeyType, Any]:
+def deep_update(
+    mapping: Dict[KeyType, Any], *updating_mappings: Dict[KeyType, Any]
+) -> Dict[KeyType, Any]:
     updated_mapping = mapping.copy()
     for updating_mapping in updating_mappings:
         for k, v in updating_mapping.items():
-            if k in updated_mapping and isinstance(updated_mapping[k], dict) and isinstance(v,
-                                                                                            dict):
+            if (
+                k in updated_mapping
+                and isinstance(updated_mapping[k], dict)
+                and isinstance(v, dict)
+            ):
                 updated_mapping[k] = deep_update(updated_mapping[k], v)
             else:
                 updated_mapping[k] = v
@@ -42,31 +46,32 @@ def setup_arg_parser() -> argparse.Namespace:
 
     parser.add_argument("-mh", "--mongo-host", default=os.environ.get("MONGO_HOST"))
     parser.add_argument("-mp", "--mongo-port", default=os.environ.get("MONGO_PORT"))
+    parser.add_argument(
+        "-ksu", "--keycloak-server-url", default=os.environ.get("KEYCLOAK_SERVER_URL")
+    )
+    parser.add_argument(
+        "-ku",
+        "--keycloak-admin-username",
+        default=os.environ.get("KEYCLOAK_ADMIN_USERNAME"),
+    )
+    parser.add_argument(
+        "-kp",
+        "--keycloak-admin-password",
+        default=os.environ.get("KEYCLOAK_ADMIN_PASSWORD"),
+    )
 
     subparsers = parser.add_subparsers(dest="mode")
     # subparsers.required = True
 
     parser_add = subparsers.add_parser("add-users")
     parser_add.add_argument(
-        "-ksu", "--keycloak-server-url", default=os.environ.get("KEYCLOAK_SERVER_URL")
-    )
-    parser_add.add_argument(
-        "-ku",
-        "--keycloak-admin-username",
-        default=os.environ.get("KEYCLOAK_ADMIN_USERNAME"),
-    )
-    parser_add.add_argument(
-        "-kp",
-        "--keycloak-admin-password",
-        default=os.environ.get("KEYCLOAK_ADMIN_PASSWORD"),
-    )
-    parser_add.add_argument(
-        "-kg",
-        "--keycloak-group-path",
-        default=os.environ.get("KEYCLOAK_GROUP_PATH"),
-    )
-    parser_add.add_argument(
         "-u", "--users-from-csv", default=os.environ.get("USERS_FROM_CSV")
+    )
+    parser_add.add_argument(
+        "-kr", "--keycloak-roles", default=os.environ.get("KEYCLOAK_ROLES")
+    )
+    parser_add.add_argument(
+        "-kg", "--keycloak-group-paths", default=os.environ.get("KEYCLOAK_GROUP_PATHS")
     )
     parser_add.add_argument(
         "-mccn",
@@ -107,7 +112,18 @@ def setup_arg_parser() -> argparse.Namespace:
         default=os.environ.get("EDIT_MODE"),
     )
     parser_update_users_settings.add_argument(
-        "-snn", "--setting-name", default=os.environ.get("SETTING_NAME")
+        "-eu", "--edit-users-from-csv", default=os.environ.get("EDIT_USERS_FROM_CSV")
+    )
+    parser_update_users_settings.add_argument(
+        "-ekr", "--edit-keycloak-roles", default=os.environ.get("EDIT_KEYCLOAK_ROLES")
+    )
+    parser_update_users_settings.add_argument(
+        "-ekg",
+        "--edit-keycloak-group-paths",
+        default=os.environ.get("EDIT_KEYCLOAK_GROUP_PATHS"),
+    )
+    parser_update_users_settings.add_argument(
+        "-snn", "--setting-name", default=os.environ.get("SETTING_NAME", None)
     )
     parser_update_users_settings.add_argument(
         "-svf", "--setting-value-file", default=os.environ.get("SETTING_VALUE_FILE")

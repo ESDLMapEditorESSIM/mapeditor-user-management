@@ -78,8 +78,7 @@
           "from_state": {
             "selected_workflow_type": "selected_workflow_type"
           },
-          "to_state": {
-          },
+          "to_state": {},
           "output_wrapper_variable": "input_params_dict"
         },
         "next_step": "base_steps_with_table",
@@ -221,11 +220,11 @@
         "description": "",
         "type": "table-external-model",
         "config": {
+          "external_model": "omotes",
           "model_short_name": "omotes",
           "result_animation": {},
           "has_feedback_messages": true,
           "delete_result_url": "http://omotes-rest:9200/job/<MODEL_JOB_ID>",
-          "load_input_esdl": true,
           "time_series_xlsx_download": {
             "esdl_object_name_field": "assetName",
             "excel_sheets_per_table": [

@@ -278,7 +278,6 @@
           "id": "74c9d1a2-c92a-46ed-a7e4-9931971cdd28",
           "description": "",
           "name": "",
-          "button_label": "Run Essim Calculation",
           "headers": {
             "User-Agent": "ESDL Mapeditor/1.0",
             "Accept": "application/json",
@@ -423,7 +422,6 @@
             "value_database_key": "model_specific_output.dashboardURL"
           },
           "delete_result_url": "",
-          "load_input_esdl": true,
           "time_series_xlsx_download": {
             "filter_on_tag": {
               "tag_name": "simulationRun",
@@ -574,7 +572,6 @@
           "id": "74c9d1a2-c92a-46ed-a7e4-9931971cbb21",
           "description": "",
           "name": "",
-          "button_label": "Run Omotes Calculation",
           "headers": {
             "User-Agent": "ESDL Mapeditor/1.0",
             "Content-Type": "application/json"
@@ -699,6 +696,7 @@
           "result_animation": {},
           "has_feedback_messages": true,
           "delete_result_url": "http://omotes-rest:9200/job/<MODEL_JOB_ID>",
+          "load_input_esdl": true,
           "time_series_xlsx_download": {
             "esdl_object_name_field": "assetName",
             "excel_sheets_per_table": [
