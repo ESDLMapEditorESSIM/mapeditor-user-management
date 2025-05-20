@@ -3,17 +3,12 @@ from enum import Enum
 from pymongo import MongoClient
 from pymongo.database import Database, Collection
 
+from mapeditor_user_management.constants import MapEditorSettingType
+
 SYSTEM_NAME_IDENTIFIER = (
     "mapeditor"  # only one identifier of system settings for mapeditor
 )
 MAPEDITOR_DATABASE = "esdl_mapeditor_settings"
-
-
-# different types of settings
-class SettingType(Enum):
-    USER = "user"
-    PROJECT = "project"
-    SYSTEM = "system"
 
 
 class MongoInterface:
@@ -34,7 +29,9 @@ class MongoInterface:
         self.settings: Collection = self.db.settings
         self.external_model_runs = self.db.external_model_runs
 
-    def get_setting(self, setting_type: SettingType, identifier: str, setting_name: str):
+    def get_setting(
+        self, setting_type: MapEditorSettingType, identifier: str, setting_name: str
+    ):
         if self.settings is None:
             return None
         mapeditor_settings_obj = self.settings.find_one(
@@ -60,18 +57,19 @@ class MongoInterface:
         if self.settings is None:
             return None
 
-        return self.settings.find({"type": SettingType.USER.value})
+        return self.settings.find({"type": MapEditorSettingType.USER.value})
 
     def set_user_setting(self, user_email: str, setting_name: str, value: dict):
         if self.settings is None:
             return None
         mapeditor_settings_obj = self.settings.find_one(
-            {"type": SettingType.USER.value, "name": user_email}, {setting_name: 1}
+            {"type": MapEditorSettingType.USER.value, "name": user_email},
+            {setting_name: 1},
         )
         if mapeditor_settings_obj is None:
             # unknown identifier, create first
             doc = {
-                "type": SettingType.USER.value,
+                "type": MapEditorSettingType.USER.value,
                 "name": user_email,
                 setting_name: value,
             }
@@ -92,7 +90,5 @@ class MongoInterface:
         if self.external_model_runs is None:
             return None
         return self.external_model_runs.replace_one(
-            {"run_id": external_model_run["run_id"]},
-            external_model_run,
-            upsert=False
+            {"run_id": external_model_run["run_id"]}, external_model_run, upsert=False
         )

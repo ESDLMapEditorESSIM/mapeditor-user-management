@@ -3,7 +3,7 @@ import csv
 import os
 import sys
 from typing import Dict, Any, TypeVar
-from mapeditor_user_management.user import User
+from mapeditor_user_management.constants import User
 
 KeyType = TypeVar("KeyType")
 

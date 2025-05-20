@@ -1,7 +1,8 @@
 from keycloak import KeycloakAdmin
 from keycloak import KeycloakOpenIDConnection
 
-from mapeditor_user_management.user import User
+from mapeditor_user_management.constants import KeycloakEditMode
+from mapeditor_user_management.constants import User
 
 KEYCLOAK_REALM = "esdl-mapeditor"
 ADMIN_REALM = "master"
@@ -45,7 +46,7 @@ class KeycloakAdminInterface:
 
     def edit_users_keycloak(
         self,
-        mode: str,
+        mode: KeycloakEditMode,
         usernames: list[str] = None,
         roles: dict[str, str] = None,
         group_paths: list[str] = None,
@@ -69,9 +70,9 @@ class KeycloakAdminInterface:
                 for client_name, role_name in roles.items():
                     if client_name.lower() == "realm":
                         role = self.admin.get_realm_role(role_name)
-                        if mode == "add":
+                        if mode == KeycloakEditMode.ADD:
                             self.admin.assign_realm_roles(user_id=user_id, roles=[role])
-                        elif mode == "delete":
+                        elif mode == KeycloakEditMode.DELETE:
                             self.admin.delete_realm_roles_of_user(
                                 user_id=user_id, roles=[role]
                             )
@@ -81,11 +82,11 @@ class KeycloakAdminInterface:
                             client_id=client_id, role_name=role_name
                         )
 
-                        if mode == "add":
+                        if mode == KeycloakEditMode.ADD:
                             self.admin.assign_client_role(
                                 client_id=client_id, user_id=user_id, roles=[role]
                             )
-                        elif mode == "delete":
+                        elif mode == KeycloakEditMode.DELETE:
                             self.admin.delete_client_roles_of_user(
                                 client_id=client_id, user_id=user_id, roles=[role]
                             )
@@ -93,7 +94,7 @@ class KeycloakAdminInterface:
                 for group_path in group_paths:
                     group_id = self.admin.get_group_by_path(group_path)["id"]
 
-                    if mode == "add":
+                    if mode == KeycloakEditMode.ADD:
                         self.admin.group_user_add(user_id, group_id)
-                    elif mode == "delete":
+                    elif mode == KeycloakEditMode.DELETE:
                         self.admin.group_user_remove(user_id, group_id)
