@@ -401,6 +401,26 @@
             "retry_interval_seconds": 2,
             "maximum_wait_seconds": 3600
           }
+        },
+        "workflow_engine": {
+          "workflow_engine_next_step": "show_run_results"
+        }
+      },
+      {
+        "id": "show_run_results",
+        "monitor_name": "Essim Result",
+        "type": "workflow-engine-monitor",
+        "config": {
+          "model_run_show_results": [
+            {
+              "description": "run name",
+              "value_database_key": "run_name"
+            },
+            {
+              "value_database_key": "model_specific_output.dashboardURL",
+              "link_text": "Open dashboard"
+            }
+          ]
         }
       },
       {
