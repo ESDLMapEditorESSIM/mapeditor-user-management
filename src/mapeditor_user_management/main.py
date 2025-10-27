@@ -60,7 +60,7 @@ def main():
             f"Added users with config: '{args.model_contexts_config_file}', '{args.esdl_services_config_file}'"
             f", '{args.mapeditor_user_config_file}'"
         )
-    elif args.mode == "edit-users-settings":
+    elif args.mode == Mode.EDIT_USERS_SETTINGS:
         edit_usernames = None
         mongo_usernames = [user["name"] for user in existing_users]
         if args.edit_users_from_csv:
