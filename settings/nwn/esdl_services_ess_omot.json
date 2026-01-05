@@ -444,6 +444,7 @@
             "value_database_key": "model_specific_output.dashboardURL"
           },
           "delete_result_url": "",
+          "load_input_esdl": true,
           "time_series_xlsx_download": {
             "filter_on_tag": {
               "tag_name": "simulationRun",
@@ -890,20 +891,34 @@
           "columns": [
             {
               "dataIndex": "name",
-              "title": "Name",
+              "title": "name",
               "ellipsis": true
             },
             {
+              "dataIndex": "wellDepth",
+              "title": "depth [m]",
+              "nrOfDecimals": 0,
+              "sortable": true,
+              "defaultSortOrder": "ascend"
+            },
+            {
               "dataIndex": "aquiferTemperature",
-              "title": "Temperature [\u00B0C]"
+              "title": "temp [\u00B0C]",
+              "nrOfDecimals": 1
             },
             {
               "dataIndex": "flowRate",
-              "title": "Flow Rate [kg/s]"
+              "title": "flow rate [m3/h]",
+              "sourceUnit": "kg/s",
+              "targetUnit": "m3/h",
+              "nrOfDecimals": 2
             },
             {
               "dataIndex": "power",
-              "title": "Power [W]"
+              "title": "power [MW]",
+              "sourceUnit": "W",
+              "targetUnit": "MW",
+              "nrOfDecimals": 2
             }
           ],
           "row_selection": {
@@ -920,7 +935,9 @@
         },
         "data": {
           "from_url": {
-            "url": "http://localhost:6300/api/query",
+            "url": "http://geo-esdl-service:6300/api/query",
+            "method": "post",
+            "params_location": "params",
             "request_params": [
               {
                 "name": "lat",
@@ -962,9 +979,9 @@
             "Accept": "application/esdl+xml",
             "User-Agent": "ESDL Mapeditor/0.1"
           },
-          "url": "http://localhost:6300/api/query",
-          "http_method": "get",
-          "type": "",
+          "url": "http://geo-esdl-service:6300/api/query",
+          "http_method": "post",
+          "type": "json",
           "query_parameters": [
             {
               "parameter_name": "lat",
@@ -980,6 +997,9 @@
             }
           ],
           "body": "",
+          "body_config": {
+            "type": "params"
+          },
           "result": [
             {
               "code": 200,
@@ -996,6 +1016,161 @@
         "type": "text",
         "data": {
           "from_config": "A Geothermal Source was added to the active ESDL.<br>It has not yet been connected to other assets."
+        },
+        "button_text": "Close"
+      }
+    ]
+  },
+  {
+    "id": "e04ec8d5-a15f-41c4-a8a3-6a94825c9f49",
+    "name": "Add ATES",
+    "type": "workflow",
+    "location": "map_context_menu",
+    "headers": {
+      "Accept": "application/esdl+xml",
+      "User-Agent": "ESDL Mapeditor/0.1"
+    },
+    "workflow": [
+      {
+        "id": "select_and_create_ates",
+        "type": "composite",
+        "config": {
+          "step_ids": [
+            "choose_ates",
+            "add_ates"
+          ]
+        },
+        "next_step": "select_and_create_ates"
+      },
+      {
+        "id": "choose_ates",
+        "name": "Select one of the aquifers below",
+        "description": "Preliminary properties and costs from regional nation-wide maps: review before use!\nSee www.thermogis.nl/en/high-temperature-aquifer-thermal-energy-storage",
+        "type": "table",
+        "config": {
+          "columns": [
+            {
+              "dataIndex": "name",
+              "title": "name",
+              "ellipsis": true
+            },
+            {
+              "dataIndex": "aquiferTopDepth",
+              "title": "depth [m]",
+              "nrOfDecimals": 0
+            },
+            {
+              "dataIndex": "aquiferThickness",
+              "title": "thickness [m]",
+              "nrOfDecimals": 0
+            },
+            {
+              "dataIndex": "maxDischargeRate",
+              "title": "power [MW]",
+              "sourceUnit": "W",
+              "targetUnit": "MW",
+              "nrOfDecimals": 2
+            }
+          ],
+          "initSort": {
+            "columnDataIndex": "wellDepth",
+            "order": "ascend"
+          },
+          "row_selection": {
+            "type": "radio",
+            "enabled": {
+              "dataIndex": "maxDischargeRate",
+              "condition": {
+                "type": "larger_than",
+                "value": 0
+              }
+            }
+          },
+          "value_field": "name"
+        },
+        "data": {
+          "from_url": {
+            "url": "http://geo-esdl-service:6300/api/query",
+            "method": "post",
+            "params_location": "params",
+            "request_params": [
+              {
+                "name": "lat",
+                "parameter_name": "lat"
+              },
+              {
+                "name": "lng",
+                "parameter_name": "lng"
+              },
+              {
+                "name": "service_identifier",
+                "value": "ates_layer_selection"
+              }
+            ]
+          },
+          "to_state": {
+          },
+          "output_wrapper_variable": "chosen_aquifer_row"
+        },
+        "next_step_trigger": "input_change"
+      },
+      {
+        "id": "add_ates",
+        "name": "Add ATES to the active ESDL",
+        "description": "",
+        "type": "esdl-service",
+        "config": {
+          "state_params": {
+            "lat": "lat",
+            "lng": "lng",
+            "service_identifier": "chosen_aquifer_row.dictKey"
+          }
+        },
+        "service": {
+          "id": "a859bd1b-58d2-4018-9f4e-8ca62962442d",
+          "name": "Call service",
+          "description": "",
+          "headers": {
+            "Accept": "application/esdl+xml",
+            "User-Agent": "ESDL Mapeditor/0.1"
+          },
+          "url": "http://geo-esdl-service:6300/api/query",
+          "http_method": "post",
+          "type": "json",
+          "query_parameters": [
+            {
+              "parameter_name": "lat",
+              "parameter": "lat"
+            },
+            {
+              "parameter_name": "lng",
+              "parameter": "lng"
+            },
+            {
+              "parameter_name": "service_identifier",
+              "parameter": "service_identifier"
+            }
+          ],
+          "body": "",
+          "body_config": {
+            "type": "params"
+          },
+          "result": [
+            {
+              "code": 200,
+              "action": "add_assets"
+            }
+          ]
+        },
+        "button_text": "Add ATES",
+        "next_step": "ates_added_message"
+      },
+      {
+        "id": "ates_added_message",
+        "name": "ATES Added",
+        "type": "text",
+        "data": {
+          "from_config": "An ATES was added to the active ESDL.<br>It has not yet been connected to other assets."
         },
         "button_text": "Close"
       }
