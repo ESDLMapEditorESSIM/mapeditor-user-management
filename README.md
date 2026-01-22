@@ -27,13 +27,8 @@ For adding new users to the ESDL MapEditor or updating settings for existing use
    python -m mapeditor_user_management.main edit-users-settings --help
    ```
 
-3. Run by (optionally with arguments):
-    ```bash
-    ./run.sh
-    ```
-   or run `main.py` directly from working directory
-   `C:/Users/vrijlandtmaw/code/nwn/mapeditor-user-management/`, in PyCharm mark the `src` folder as
-   `Sources Root`.
+3. Run (optionally with arguments) `main.py` or `run.sh` with the repo root as working directory (PyCharm mark the
+   `src` folder as `Sources Root`).
 
 ### Not committed users/config
 

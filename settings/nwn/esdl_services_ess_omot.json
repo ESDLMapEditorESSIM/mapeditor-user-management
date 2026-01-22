@@ -1045,7 +1045,7 @@
       {
         "id": "choose_ates",
         "name": "Select one of the aquifers below",
-        "description": "Preliminary properties and costs from regional nation-wide maps: review before use!\nSee www.thermogis.nl/en/high-temperature-aquifer-thermal-energy-storage",
+        "description": "Preliminary properties and costs from regional nation-wide maps: review before use! See <a href=\"https://www.thermogis.nl/en/high-temperature-aquifer-thermal-energy-storage\" target=\"_blank\">disclaimer</a>.",
         "type": "table",
         "config": {
           "columns": [
