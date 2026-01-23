@@ -129,6 +129,23 @@ def setup_arg_parser() -> argparse.Namespace:
         "-svf", "--setting-value-file", default=os.environ.get("SETTING_VALUE_FILE")
     )
 
+    parser_update_mongo_user_config = subparsers.add_parser("update-mongo-user-config")
+    parser_update_mongo_user_config.add_argument(
+        "-em",
+        "--edit-mode",
+        choices=["update", "overwrite", "delete"],
+        default=os.environ.get("EDIT_MODE"),
+    )
+    parser_update_mongo_user_config.add_argument(
+        "-eu", "--edit-users-from-csv", default=os.environ.get("EDIT_USERS_FROM_CSV")
+    )
+    parser_update_mongo_user_config.add_argument(
+        "-snn", "--setting-name", default=os.environ.get("SETTING_NAME", None)
+    )
+    parser_update_mongo_user_config.add_argument(
+        "-svf", "--setting-value-file", default=os.environ.get("SETTING_VALUE_FILE")
+    )
+
     args = parser.parse_args()
     if not args.mode and os.environ.get("MODE"):
         # reparse the arguments:
