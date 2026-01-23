@@ -675,6 +675,8 @@
           "model_short_name": "essim",
           "has_feedback_messages": false,
           "result_animation": {
+            "influxdb_host_override": "influxdb",
+            "influxdb_port_override": "8086",
             "filter_on_tag": {
               "tag_name": "simulationRun",
               "value_database_key": "model_job_id"
