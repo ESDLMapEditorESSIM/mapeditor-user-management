@@ -1,0 +1,688 @@
+[
+  {
+    "id": "x12c4a2b-8eee-46f7-a225-87c5f85e648f",
+    "name": "Omotes",
+    "explanation": "Run, view and manage heat network simulations and optimizations",
+    "type": "vueworkflow",
+    "hide_step_history": true,
+    "workflow": [
+      {
+        "id": "base_steps_with_table",
+        "type": "composite",
+        "config": {
+          "step_ids": [
+            "select_name",
+            "select_workflow_type",
+            "other_input_parameters",
+            "start_run",
+            "runs_table"
+          ]
+        },
+        "next_step": "base_steps_with_table"
+      },
+      {
+        "id": "select_name",
+        "name": "New optimization/simulation",
+        "type": "json-form2",
+        "data": {
+          "from_config": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "run_name": {
+                  "type": "string",
+                  "minLength": 3,
+                  "title": "Name"
+                }
+              },
+              "required": [
+                "run_name"
+              ]
+            }
+          },
+          "to_state": {}
+        },
+        "next_step": "base_steps_with_table",
+        "next_step_trigger": "input_change"
+      },
+      {
+        "id": "select_workflow_type",
+        "name": "",
+        "description": "Please select the Omotes workflow type for the calculation:",
+        "type": "select",
+        "config": {
+          "multiple": false,
+          "label_fields": [
+            "description"
+          ],
+          "value_field": "id"
+        },
+        "data": {
+          "from_url": {
+            "url": "http://omotes-rest:9200/workflow/"
+          },
+          "to_state": {},
+          "output_wrapper_variable": "selected_workflow_type"
+        },
+        "next_step": "base_steps_with_table",
+        "next_step_trigger": "input_change"
+      },
+      {
+        "id": "other_input_parameters",
+        "name": "",
+        "type": "json-form2",
+        "config": {
+          "data_from_variable": "selected_workflow_type"
+        },
+        "data": {
+          "from_state": {
+            "selected_workflow_type": "selected_workflow_type"
+          },
+          "to_state": {
+          },
+          "output_wrapper_variable": "input_params_dict"
+        },
+        "next_step": "base_steps_with_table",
+        "next_step_trigger": "input_change"
+      },
+      {
+        "id": "start_run",
+        "name": "",
+        "description": "",
+        "type": "esdl-service",
+        "config": {
+          "state_params": {
+            "workflow_type": "selected_workflow_type.id",
+            "input_params_dict": "input_params_dict",
+            "run_name": "run_name"
+          }
+        },
+        "service": {
+          "id": "74c9d1a2-c92a-46ed-a7e4-9931971cbb21",
+          "description": "",
+          "name": "",
+          "headers": {
+            "User-Agent": "ESDL Mapeditor/1.0",
+            "Content-Type": "application/json"
+          },
+          "url": "http://omotes-rest:9200/job/",
+          "http_method": "post",
+          "type": "send_esdl",
+          "send_email_in_post_body_parameter": "user_name",
+          "query_parameters": [
+            {
+              "name": "job_name",
+              "description": "Run and job name",
+              "parameter_name": "run_name",
+              "location": "body"
+            },
+            {
+              "name": "workflow_type",
+              "description": "Unique name of the workflow",
+              "parameter_name": "workflow_type",
+              "location": "body"
+            },
+            {
+              "name": "input_params_dict",
+              "description": "Input parameters (can be empty)",
+              "parameter_name": "input_params_dict",
+              "location": "body"
+            },
+            {
+              "name": "timeout_after_s",
+              "description": "Job timeout in seconds",
+              "value": 86400,
+              "location": "body"
+            }
+          ],
+          "body": "json_text",
+          "body_config": {
+            "type": "json",
+            "parameters": [
+              {
+                "type": "esdl",
+                "encoding": "base64_encoded",
+                "parameter": "input_esdl"
+              }
+            ]
+          },
+          "result": [
+            {
+              "code": 200,
+              "action": "save_model_run",
+              "external_model_name": "omotes",
+              "external_model_id_response_param": "job_id",
+              "run_name_state_param": "run_name"
+            }
+          ],
+          "with_jwt_token": false,
+          "state_params": true
+        },
+        "button_text": "Start model run",
+        "next_step": "base_steps_with_table",
+        "workflow_engine": {
+          "run_name": "state_params.run_name",
+          "workflow_engine_next_step": "retrieve_run_progress_results"
+        }
+      },
+      {
+        "id": "retrieve_run_progress_results",
+        "type": "workflow-engine-monitor",
+        "monitor_name": "Running Omotes Calculation...",
+        "config": {
+          "model_run_result_polling": {
+            "query_list": [
+              {
+                "url": "http://omotes-rest:9200/job/<MODEL_JOB_ID>",
+                "response_mapping": {
+                  "status": "status",
+                  "progress_fraction": "progress_fraction",
+                  "progress_message": "progress_message",
+                  "output_esdl": "output_esdl",
+                  "logs": "logs",
+                  "esdl_feedback": "esdl_feedback"
+                },
+                "model_specific_response_mapping": {
+                  "registered_at": "registered_at",
+                  "running_at": "running_at",
+                  "stopped_at": "stopped_at"
+                },
+                "esdl_encoding": "base64_encoded",
+                "status_mapping": {
+                  "SUBMITTED": [
+                    "REGISTERED",
+                    "ENQUEUED"
+                  ],
+                  "RUNNING": [
+                    "RUNNING"
+                  ],
+                  "SUCCEEDED": [
+                    "FINISHED",
+                    "SUCCEEDED"
+                  ],
+                  "CANCELLED": [
+                    "CANCELLED"
+                  ],
+                  "ERROR": [
+                    "TIMEOUT",
+                    "ERROR"
+                  ]
+                }
+              }
+            ],
+            "retry_interval_seconds": 2,
+            "maximum_wait_seconds": 3600
+          }
+        }
+      },
+      {
+        "id": "runs_table",
+        "name": "Results overview",
+        "description": "",
+        "type": "table-external-model",
+        "config": {
+          "model_short_name": "omotes",
+          "result_animation": {},
+          "has_feedback_messages": true,
+          "delete_result_url": "http://omotes-rest:9200/job/<MODEL_JOB_ID>",
+          "load_input_esdl": true,
+          "time_series_xlsx_download": {
+            "esdl_object_name_field": "assetName",
+            "excel_sheets_per_table": [
+              {
+                "name_postfix": "HeatIn.Q_m3_per_s",
+                "field_name_recorded_per_esdl_object": "HeatIn.Q"
+              },
+              {
+                "name_postfix": "Heat_flow_W",
+                "field_name_recorded_per_esdl_object": "Heat_flow"
+              },
+              {
+                "name_postfix": "PostProc.Velocity_m_per_s",
+                "field_name_recorded_per_esdl_object": "PostProc.Velocity"
+              }
+            ]
+          }
+        },
+        "data": {
+          "from_socket": {
+            "event": "get_external_model_runs_for_user",
+            "params": {
+              "external_model_name": "omotes"
+            }
+          },
+          "output_wrapper_variable": "model_run"
+        },
+        "with_jwt_token": true
+      }
+    ]
+  },
+  {
+    "id": "64fb5727-119e-46a6-b1b3-7ac42dc3d639",
+    "name": "ESDL Dual Pipe Service",
+    "explanation": "This service converts a single pipe network into a dual pipe compounded network.",
+    "url": "http://esdl-dual-pipe-service:8080/duplicate",
+    "http_method": "post",
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "type": "send_esdl",
+    "query_parameters": [],
+    "body": "",
+    "result": [
+      {
+        "code": 200,
+        "action": "esdl"
+      }
+    ],
+    "show_on_toolbar": true,
+    "icon": {
+      "filename": "Duplicate.png",
+      "type": "filename"
+    }
+  },
+  {
+    "id": "912c4a2b-8eee-46f7-a225-87c5f85e645f",
+    "name": "ESDL Validator",
+    "explanation": "This service allows you validate an ESDL against a certain schema",
+    "type": "vueworkflow",
+    "workflow": [
+      {
+        "id": "schema_and_validate",
+        "type": "composite",
+        "config": {
+          "step_ids": [
+            "select_schema",
+            "validate_esdl"
+          ]
+        },
+        "next_step": "schema_and_validate"
+      },
+      {
+        "id": "select_schema",
+        "name": "Select schema",
+        "description": "",
+        "type": "select",
+        "config": {
+          "multiple": false,
+          "label_fields": [
+            "name"
+          ],
+          "value_field": "id"
+        },
+        "data": {
+          "from_url": {
+            "url": "http://esdl-validator:5000/schema?name=Optimizer%20validation%20schema&name=Simulator%20validation%20schema"
+          },
+          "to_state": {},
+          "output_wrapper_variable": "schema"
+        },
+        "next_step": "schema_and_validate",
+        "next_step_trigger": "input_change"
+      },
+      {
+        "id": "validate_esdl",
+        "name": "",
+        "type": "esdl-service",
+        "config": {
+          "state_params": {
+            "schemas": "schema.id"
+          }
+        },
+        "service": {
+          "id": "64c9d1a2-c92a-46ed-a7e4-9931971cbb20",
+          "name": "Validate ESDL against schema",
+          "description": "",
+          "headers": {
+            "User-Agent": "ESDL Mapeditor/0.1",
+            "Content-Type": "application/xml;charset=UTF-8"
+          },
+          "url": "http://esdl-validator:5000/validationToMessages",
+          "http_method": "post",
+          "type": "send_esdl",
+          "query_parameters": [
+            {
+              "name": "Schemas",
+              "description": "ID of the schema to validate this ESDL against",
+              "parameter_name": "schemas"
+            }
+          ],
+          "body": "",
+          "result": [
+            {
+              "code": 200,
+              "action": "asset_feedback"
+            }
+          ],
+          "with_jwt_token": false,
+          "state_params": true
+        },
+        "button_text": "Validate",
+        "previous_step": "select_schema"
+      }
+    ],
+    "show_on_toolbar": true,
+    "icon": {
+      "filename": "Validator.png",
+      "type": "filename"
+    }
+  },
+  {
+    "id": "e04ec8d5-a15f-41c4-a8a3-6a94825c9f49",
+    "name": "Add Geothermal Source",
+    "type": "workflow",
+    "location": "map_context_menu",
+    "headers": {
+      "Accept": "application/esdl+xml",
+      "User-Agent": "ESDL Mapeditor/0.1"
+    },
+    "workflow": [
+      {
+        "id": "select_and_create_geothermal_source",
+        "type": "composite",
+        "config": {
+          "step_ids": [
+            "choose_geothermal_source",
+            "add_geothermal_source"
+          ]
+        },
+        "next_step": "select_and_create_geothermal_source"
+      },
+      {
+        "id": "choose_geothermal_source",
+        "name": "Select one of the aquifers below",
+        "description": "Properties from regional nation-wide maps: <a href=\"https://www.thermogis.nl/en\" target=\"_blank\">ThermoGIS</a> v2.5, August 2025.<br>A local study will give more reliable results.",
+        "type": "table",
+        "config": {
+          "columns": [
+            {
+              "dataIndex": "name",
+              "title": "name",
+              "ellipsis": true
+            },
+            {
+              "dataIndex": "wellDepth",
+              "title": "depth [m]",
+              "nrOfDecimals": 0,
+              "sortable": true,
+              "defaultSortOrder": "ascend"
+            },
+            {
+              "dataIndex": "aquiferTemperature",
+              "title": "temp [\u00B0C]",
+              "nrOfDecimals": 1
+            },
+            {
+              "dataIndex": "maximumFlowRate",
+              "title": "flow rate [m3/h]",
+              "nrOfDecimals": 2
+            },
+            {
+              "dataIndex": "power",
+              "title": "power [MW]",
+              "sourceUnit": "W",
+              "targetUnit": "MW",
+              "nrOfDecimals": 2
+            }
+          ],
+          "row_selection": {
+            "type": "radio",
+            "enabled": {
+              "dataIndex": "power",
+              "condition": {
+                "type": "larger_than",
+                "value": 0
+              }
+            }
+          },
+          "value_field": "name"
+        },
+        "data": {
+          "from_url": {
+            "url": "http://geo-esdl-service:6300/api/query",
+            "method": "post",
+            "params_location": "params",
+            "request_params": [
+              {
+                "name": "lat",
+                "parameter_name": "lat"
+              },
+              {
+                "name": "lng",
+                "parameter_name": "lng"
+              },
+              {
+                "name": "service_identifier",
+                "value": "geothermal_layer_selection"
+              }
+            ]
+          },
+          "to_state": {
+          },
+          "output_wrapper_variable": "chosen_aquifer_row"
+        },
+        "next_step_trigger": "input_change"
+      },
+      {
+        "id": "add_geothermal_source",
+        "name": "Add Geothermal Source to the active ESDL",
+        "description": "",
+        "type": "esdl-service",
+        "config": {
+          "state_params": {
+            "lat": "lat",
+            "lng": "lng",
+            "service_identifier": "chosen_aquifer_row.dictKey"
+          }
+        },
+        "service": {
+          "id": "a859bd1b-58d2-4018-9f4e-8ca62962442d",
+          "name": "Call service",
+          "description": "",
+          "headers": {
+            "Accept": "application/esdl+xml",
+            "User-Agent": "ESDL Mapeditor/0.1"
+          },
+          "url": "http://geo-esdl-service:6300/api/query",
+          "http_method": "post",
+          "type": "json",
+          "query_parameters": [
+            {
+              "parameter_name": "lat",
+              "parameter": "lat"
+            },
+            {
+              "parameter_name": "lng",
+              "parameter": "lng"
+            },
+            {
+              "parameter_name": "service_identifier",
+              "parameter": "service_identifier"
+            }
+          ],
+          "body": "",
+          "body_config": {
+            "type": "params"
+          },
+          "result": [
+            {
+              "code": 200,
+              "action": "add_assets"
+            }
+          ]
+        },
+        "button_text": "Add Geothermal Source",
+        "next_step": "geothermal_source_added_message"
+      },
+      {
+        "id": "geothermal_source_added_message",
+        "name": "Geothermal Source Added",
+        "type": "text",
+        "data": {
+          "from_config": "A Geothermal Source was added to the active ESDL.<br>It has not yet been connected to other assets."
+        },
+        "button_text": "Close"
+      }
+    ]
+  },
+  {
+    "id": "e04ec8d5-a15f-41c4-a8a3-6a94825c9f49",
+    "name": "Add ATES",
+    "type": "workflow",
+    "location": "map_context_menu",
+    "headers": {
+      "Accept": "application/esdl+xml",
+      "User-Agent": "ESDL Mapeditor/0.1"
+    },
+    "workflow": [
+      {
+        "id": "select_and_create_ates",
+        "type": "composite",
+        "config": {
+          "step_ids": [
+            "choose_ates",
+            "add_ates"
+          ]
+        },
+        "next_step": "select_and_create_ates"
+      },
+      {
+        "id": "choose_ates",
+        "name": "Select one of the aquifers below",
+        "description": "Preliminary properties and costs from regional nation-wide maps.<br><b>Review before use!</b> <a href=\"https://raw.githubusercontent.com/DHCN-Design-Toolkit/DTK-ESDL-documentation/main/documents/ATES_potential_maps_Disclaimer_EN.pdf\">Download disclaimer</a>.",
+        "type": "table",
+        "config": {
+          "columns": [
+            {
+              "dataIndex": "name",
+              "title": "name",
+              "ellipsis": true
+            },
+            {
+              "dataIndex": "aquiferTopDepth",
+              "title": "depth [m]",
+              "nrOfDecimals": 0
+            },
+            {
+              "dataIndex": "aquiferThickness",
+              "title": "thickness [m]",
+              "nrOfDecimals": 0
+            },
+            {
+              "dataIndex": "maximumFlowRate",
+              "title": "flow rate [m3/h]",
+              "nrOfDecimals": 2
+            },
+            {
+              "dataIndex": "maxDischargeRate",
+              "title": "power [MW]",
+              "sourceUnit": "W",
+              "targetUnit": "MW",
+              "nrOfDecimals": 2
+            }
+          ],
+          "initSort": {
+            "columnDataIndex": "wellDepth",
+            "order": "ascend"
+          },
+          "row_selection": {
+            "type": "radio",
+            "enabled": {
+              "dataIndex": "maxDischargeRate",
+              "condition": {
+                "type": "larger_than",
+                "value": 0
+              }
+            }
+          },
+          "value_field": "name"
+        },
+        "data": {
+          "from_url": {
+            "url": "http://geo-esdl-service:6300/api/query",
+            "method": "post",
+            "params_location": "params",
+            "request_params": [
+              {
+                "name": "lat",
+                "parameter_name": "lat"
+              },
+              {
+                "name": "lng",
+                "parameter_name": "lng"
+              },
+              {
+                "name": "service_identifier",
+                "value": "ates_layer_selection"
+              }
+            ]
+          },
+          "to_state": {
+          },
+          "output_wrapper_variable": "chosen_aquifer_row"
+        },
+        "next_step_trigger": "input_change"
+      },
+      {
+        "id": "add_ates",
+        "name": "Add ATES to the active ESDL",
+        "description": "",
+        "type": "esdl-service",
+        "config": {
+          "state_params": {
+            "lat": "lat",
+            "lng": "lng",
+            "service_identifier": "chosen_aquifer_row.dictKey"
+          }
+        },
+        "service": {
+          "id": "a859bd1b-58d2-4018-9f4e-8ca62962442d",
+          "name": "Call service",
+          "description": "",
+          "headers": {
+            "Accept": "application/esdl+xml",
+            "User-Agent": "ESDL Mapeditor/0.1"
+          },
+          "url": "http://geo-esdl-service:6300/api/query",
+          "http_method": "post",
+          "type": "json",
+          "query_parameters": [
+            {
+              "parameter_name": "lat",
+              "parameter": "lat"
+            },
+            {
+              "parameter_name": "lng",
+              "parameter": "lng"
+            },
+            {
+              "parameter_name": "service_identifier",
+              "parameter": "service_identifier"
+            }
+          ],
+          "body": "",
+          "body_config": {
+            "type": "params"
+          },
+          "result": [
+            {
+              "code": 200,
+              "action": "add_assets"
+            }
+          ]
+        },
+        "button_text": "Add ATES",
+        "next_step": "ates_added_message"
+      },
+      {
+        "id": "ates_added_message",
+        "name": "ATES Added",
+        "type": "text",
+        "data": {
+          "from_config": "An ATES was added to the active ESDL.<br>It has not yet been connected to other assets."
+        },
+        "button_text": "Close"
+      }
+    ]
+  }
+]
