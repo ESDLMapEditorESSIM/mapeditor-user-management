@@ -312,7 +312,7 @@
         },
         "data": {
           "from_url": {
-            "url": "http://esdl-validator:5000/schema?name=Optimizer%20validation%20schema&name=Simulator%20validation%20schema"
+            "url": "http://esdl-validator:5000/schema"
           },
           "to_state": {},
           "output_wrapper_variable": "schema"
@@ -337,7 +337,7 @@
             "User-Agent": "ESDL Mapeditor/0.1",
             "Content-Type": "application/xml;charset=UTF-8"
           },
-          "url": "http://esdl-validator:5000/validationToMessages",
+          "url": "http://esdl-validator:5000/validationToMessages/",
           "http_method": "post",
           "type": "send_esdl",
           "query_parameters": [

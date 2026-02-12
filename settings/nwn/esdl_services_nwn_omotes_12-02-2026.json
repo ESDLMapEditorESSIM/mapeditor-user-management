@@ -312,7 +312,7 @@
         },
         "data": {
           "from_url": {
-            "url": "http://esdl-validator:5000/schema"
+            "url": "http://esdl-validator:5000/schema?name=Optimizer%20validation%20schema&name=Simulator%20validation%20schema"
           },
           "to_state": {},
           "output_wrapper_variable": "schema"
@@ -337,7 +337,7 @@
             "User-Agent": "ESDL Mapeditor/0.1",
             "Content-Type": "application/xml;charset=UTF-8"
           },
-          "url": "http://esdl-validator:5000/validationToMessages/",
+          "url": "http://esdl-validator:5000/validationToMessages",
           "http_method": "post",
           "type": "send_esdl",
           "query_parameters": [
@@ -391,7 +391,7 @@
       {
         "id": "choose_geothermal_source",
         "name": "Select one of the aquifers below",
-        "description": "Properties from regional nation-wide maps: a local study will give more reliable results.",
+        "description": "Properties from regional nation-wide maps: <a href=\"https://www.thermogis.nl/en\" target=\"_blank\">ThermoGIS</a> v2.5, August 2025.<br>A local study will give more reliable results.",
         "type": "table",
         "config": {
           "columns": [
@@ -413,10 +413,8 @@
               "nrOfDecimals": 1
             },
             {
-              "dataIndex": "flowRate",
+              "dataIndex": "maximumFlowRate",
               "title": "flow rate [m3/h]",
-              "sourceUnit": "kg/s",
-              "targetUnit": "m3/h",
               "nrOfDecimals": 2
             },
             {
@@ -551,7 +549,7 @@
       {
         "id": "choose_ates",
         "name": "Select one of the aquifers below",
-        "description": "Preliminary properties and costs from regional nation-wide maps: review before use!\nSee www.thermogis.nl/en/high-temperature-aquifer-thermal-energy-storage",
+        "description": "Preliminary properties and costs from regional nation-wide maps.<br><b>Review before use!</b> <a href=\"https://raw.githubusercontent.com/DHCN-Design-Toolkit/DTK-ESDL-documentation/main/documents/ATES_potential_maps_Disclaimer_EN.pdf\">Download disclaimer</a>.",
         "type": "table",
         "config": {
           "columns": [
@@ -569,6 +567,11 @@
               "dataIndex": "aquiferThickness",
               "title": "thickness [m]",
               "nrOfDecimals": 0
+            },
+            {
+              "dataIndex": "maximumFlowRate",
+              "title": "flow rate [m3/h]",
+              "nrOfDecimals": 2
             },
             {
               "dataIndex": "maxDischargeRate",
