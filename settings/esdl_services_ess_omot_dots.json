@@ -399,7 +399,7 @@
               }
             ],
             "retry_interval_seconds": 2,
-            "maximum_wait_seconds": 3600
+            "maximum_wait_seconds": 86400
           }
         },
         "workflow_engine": {
@@ -703,7 +703,7 @@
               }
             ],
             "retry_interval_seconds": 2,
-            "maximum_wait_seconds": 3600
+            "maximum_wait_seconds": 86400
           }
         }
       },
@@ -1280,7 +1280,7 @@
             },
             "formData": {
               "start_date_time": "2020-08-11T00:00:00+0000",
-              "simulation_duration_in_seconds": 216000,
+              "simulation_duration_in_seconds": 85500,
               "keep_logs_hours": 24,
               "log_level": "info"
             }
@@ -1293,9 +1293,10 @@
       {
         "id": "dots_set_calc_services",
         "description": "Calculation services config:",
-        "type": "json-editor",
+        "type": "code-editor",
         "config": {
-          "number_of_rows": 20
+          "language": "json",
+          "number_of_rows": 15
         },
         "data": {
           "from_config": [
@@ -1308,7 +1309,7 @@
             {
               "esdl_type": "EConnection",
               "calc_service_name": "emsservice",
-              "service_image_url": "ghcr.io/dots-energy-services/emsservice:latest",
+              "service_image_url": "ghcr.io/dots-energy-services/hemsworkshop:latest",
               "nr_of_models": 1
             },
             {
@@ -1330,21 +1331,9 @@
               "nr_of_models": 1
             },
             {
-              "esdl_type": "EVChargingStation",
-              "calc_service_name": "evservice",
-              "service_image_url": "ghcr.io/dots-energy-services/evservice:latest",
-              "nr_of_models": 1
-            },
-            {
-              "esdl_type": "HeatPump",
-              "calc_service_name": "heatpumpservice",
-              "service_image_url": "ghcr.io/dots-energy-services/heatpumpservice:latest",
-              "nr_of_models": 1
-            },
-            {
-              "esdl_type": "HybridHeatPump",
-              "calc_service_name": "hybridheatpumpservice",
-              "service_image_url": "ghcr.io/dots-energy-services/hybridheatpumpservice:latest",
+              "esdl_type": "Battery",
+              "calc_service_name": "examplebatteryservice",
+              "service_image_url": "ghcr.io/dots-energy-services/examplebatteryservice:latest",
               "nr_of_models": 1
             }
           ],
@@ -1461,36 +1450,35 @@
               {
                 "url": "http://localhost:8011/api/v1/simulation/<MODEL_JOB_ID>",
                 "response_mapping": {
-                  "progress_message": "simulation_status"
+                  "status": "simulation_status"
                 },
                 "model_specific_response_mapping": {
-                  "scenarioID": "scenarioID",
-                  "simRunDate": "simRunDate",
-                  "dashboardURL": "dashboardURL"
+                  "calculation_duration": "calculation_duration"
                 },
                 "esdl_encoding": "base64_encoded",
                 "status_mapping": {
                   "SUBMITTED": [
-                    "CREATED"
+                    "all models registered"
                   ],
                   "RUNNING": [
-                    "RUNNING"
+                    "all models deployed",
+                    "all podds are deleted"
                   ],
                   "SUCCEEDED": [
-                    "COMPLETE"
+                    "all models terminated successfully, the simulation has been terminated",
+                    "all models terminated successfully, the simulation has been terminated and pods are deleted"
                   ],
-                  "CANCELLED": [
-                    "CANCELLED"
-                  ],
+                  "CANCELLED": [],
                   "ERROR": [
-                    "TIMEOUT",
-                    "ERROR"
+                    "(a) model(s) terminated with an error, the simulation has been terminated",
+                    "(a) model(s) terminated with an error, pods are deleted",
+                    "(a) deployment(s) failed, the simulation has been terminated"
                   ]
                 }
               }
             ],
             "retry_interval_seconds": 2,
-            "maximum_wait_seconds": 3600
+            "maximum_wait_seconds": 86400
           }
         }
       },
