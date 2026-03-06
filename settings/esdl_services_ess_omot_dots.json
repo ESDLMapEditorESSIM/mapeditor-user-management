@@ -850,7 +850,7 @@
           "state_params": true
         },
         "button_text": "Validate",
-        "previous_step": "select_schema"
+        "previous_step": "validator_select_schema"
       }
     ],
     "show_on_toolbar": true,
