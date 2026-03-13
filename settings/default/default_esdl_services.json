@@ -250,22 +250,22 @@
     "hide_step_history": true,
     "workflow": [
       {
-        "id": "base_steps_with_table",
+        "id": "essim_base_steps_with_table",
         "type": "composite",
         "config": {
           "step_ids": [
-            "select_name_and_time_step",
-            "select_simulation_period",
-            "select_custom_period",
-            "select_kpis",
-            "start_run",
-            "runs_table"
+            "essim_select_name_and_time_step",
+            "essim_select_simulation_period",
+            "essim_select_custom_period",
+            "essim_select_kpis",
+            "essim_start_run",
+            "essim_runs_table"
           ]
         },
-        "next_step": "base_steps_with_table"
+        "next_step": "essim_base_steps_with_table"
       },
       {
-        "id": "select_name_and_time_step",
+        "id": "essim_select_name_and_time_step",
         "name": "New Run",
         "type": "json-form2",
         "data": {
@@ -316,13 +316,13 @@
           },
           "to_state": {}
         },
-        "next_step": "base_steps_with_table",
+        "next_step": "essim_base_steps_with_table",
         "next_step_trigger": "input_change"
       },
       {
-        "id": "select_simulation_period",
+        "id": "essim_select_simulation_period",
         "name": "",
-        "description": "Please select the simulation period:",
+        "description": "Select the simulation period:",
         "type": "select",
         "config": {
           "placeholder": "Select simulation period",
@@ -461,11 +461,11 @@
           "to_state": {},
           "output_wrapper_variable": "selected_simulation_period"
         },
-        "next_step": "base_steps_with_table",
+        "next_step": "essim_base_steps_with_table",
         "next_step_trigger": "input_change"
       },
       {
-        "id": "select_custom_period",
+        "id": "essim_select_custom_period",
         "name": "",
         "type": "json-form2",
         "config": {
@@ -477,13 +477,13 @@
           },
           "to_state": {}
         },
-        "next_step": "base_steps_with_table",
+        "next_step": "essim_base_steps_with_table",
         "next_step_trigger": "input_change"
       },
       {
-        "id": "select_kpis",
+        "id": "essim_select_kpis",
         "name": "",
-        "description": "Please select the KPIs that you want to be calculated after the simulation:",
+        "description": "Select the KPIs that you want to be calculated after the simulation:",
         "type": "select",
         "config": {
           "placeholder": "Select KPI modules",
@@ -500,11 +500,11 @@
           "to_state": {},
           "output_wrapper_variable": "selected_kpis"
         },
-        "next_step": "base_steps_with_table",
+        "next_step": "essim_base_steps_with_table",
         "next_step_trigger": "input_change"
       },
       {
-        "id": "start_run",
+        "id": "essim_start_run",
         "name": "",
         "description": "",
         "type": "esdl-service",
@@ -596,14 +596,14 @@
           "state_params": true
         },
         "button_text": "Start model run",
-        "next_step": "retrieve_run_progress_results",
+        "next_step": "essim_retrieve_run_progress_status",
         "workflow_engine": {
           "run_name": "state_params.run_name",
-          "workflow_engine_next_step": "retrieve_run_progress_results"
+          "workflow_engine_next_step": "essim_retrieve_run_progress_status"
         }
       },
       {
-        "id": "retrieve_run_progress_results",
+        "id": "essim_retrieve_run_progress_status",
         "monitor_name": "Running Essim Calculation...",
         "type": "workflow-engine-monitor",
         "config": {
@@ -620,7 +620,6 @@
                   "simRunDate": "simRunDate",
                   "dashboardURL": "dashboardURL"
                 },
-                "esdl_encoding": "base64_encoded",
                 "status_mapping": {
                   "SUBMITTED": [
                     "CREATED"
@@ -642,15 +641,44 @@
               }
             ],
             "retry_interval_seconds": 2,
-            "maximum_wait_seconds": 3600
+            "maximum_wait_seconds": 86400
           }
         },
         "workflow_engine": {
-          "workflow_engine_next_step": "show_run_results"
+          "workflow_engine_next_step": "essim_retrieve_run_results"
         }
       },
       {
-        "id": "show_run_results",
+        "id": "essim_retrieve_run_results",
+        "monitor_name": "Getting Essim Results...",
+        "type": "workflow-engine-monitor",
+        "config": {
+          "model_run_result_polling": {
+            "query_list": [
+              {
+                "url": "http://essim-engine:8112/essim/simulation/<MODEL_JOB_ID>/ESDLWithProfiles",
+                "response_mapping": {
+                  "output_esdl": "esdl"
+                },
+                "esdl_encoding": "base64_encoded",
+                "stop_query_on": {
+                  "key": "output_esdl",
+                  "condition": "not_equal",
+                  "value": null,
+                  "new_status": "SUCCEEDED"
+                }
+              }
+            ],
+            "retry_interval_seconds": 2,
+            "maximum_wait_seconds": 600
+          }
+        },
+        "workflow_engine": {
+          "workflow_engine_next_step": "essim_show_run_results"
+        }
+      },
+      {
+        "id": "essim_show_run_results",
         "monitor_name": "Essim Result",
         "type": "workflow-engine-monitor",
         "config": {
@@ -667,7 +695,7 @@
         }
       },
       {
-        "id": "runs_table",
+        "id": "essim_runs_table",
         "name": "Results overview",
         "description": "",
         "type": "table-external-model",
@@ -675,8 +703,6 @@
           "model_short_name": "essim",
           "has_feedback_messages": false,
           "result_animation": {
-            "influxdb_host_override": "influxdb",
-            "influxdb_port_override": "8086",
             "filter_on_tag": {
               "tag_name": "simulationRun",
               "value_database_key": "model_job_id"
@@ -687,6 +713,7 @@
             "value_database_key": "model_specific_output.dashboardURL"
           },
           "delete_result_url": "",
+          "load_input_esdl": true,
           "time_series_xlsx_download": {
             "filter_on_tag": {
               "tag_name": "simulationRun",

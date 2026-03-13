@@ -353,14 +353,14 @@
           "state_params": true
         },
         "button_text": "Start model run",
-        "next_step": "essim_retrieve_run_progress_results",
+        "next_step": "essim_retrieve_run_progress_status",
         "workflow_engine": {
           "run_name": "state_params.run_name",
-          "workflow_engine_next_step": "essim_retrieve_run_progress_results"
+          "workflow_engine_next_step": "essim_retrieve_run_progress_status"
         }
       },
       {
-        "id": "essim_retrieve_run_progress_results",
+        "id": "essim_retrieve_run_progress_status",
         "monitor_name": "Running Essim Calculation...",
         "type": "workflow-engine-monitor",
         "config": {
@@ -377,7 +377,6 @@
                   "simRunDate": "simRunDate",
                   "dashboardURL": "dashboardURL"
                 },
-                "esdl_encoding": "base64_encoded",
                 "status_mapping": {
                   "SUBMITTED": [
                     "CREATED"
@@ -400,6 +399,35 @@
             ],
             "retry_interval_seconds": 2,
             "maximum_wait_seconds": 86400
+          }
+        },
+        "workflow_engine": {
+          "workflow_engine_next_step": "essim_retrieve_run_results"
+        }
+      },
+      {
+        "id": "essim_retrieve_run_results",
+        "monitor_name": "Getting Essim Results...",
+        "type": "workflow-engine-monitor",
+        "config": {
+          "model_run_result_polling": {
+            "query_list": [
+              {
+                "url": "http://essim-engine:8112/essim/simulation/<MODEL_JOB_ID>/ESDLWithProfiles",
+                "response_mapping": {
+                  "output_esdl": "esdl"
+                },
+                "esdl_encoding": "base64_encoded",
+                "stop_query_on": {
+                  "key": "output_esdl",
+                  "condition": "not_equal",
+                  "value": null,
+                  "new_status": "SUCCEEDED"
+                }
+              }
+            ],
+            "retry_interval_seconds": 2,
+            "maximum_wait_seconds": 600
           }
         },
         "workflow_engine": {
