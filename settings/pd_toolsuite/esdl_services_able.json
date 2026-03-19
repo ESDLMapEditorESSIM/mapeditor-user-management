@@ -1,0 +1,1218 @@
+[
+  {
+    "id": "9951c271-f9b6-4c4e-873f-b309dff19e15",
+    "name": "ABLE Plan & Design Workflow",
+    "explanation": "This workflow allows you to run the ICE workflow for business parks.",
+    "type": "vueworkflow",
+    "resumable": true,
+    "workflow": [
+      {
+        "id": "home",
+        "name": "Begin",
+        "description": "How would you like to proceed?",
+        "type": "choice",
+        "options": [
+          {
+            "name": "Create baseline Heat Network",
+            "type": "header"
+          },
+          {
+            "name": "Create a new Energy Potential Scan project",
+            "type": "primary",
+            "next_step": "create-project"
+          },
+          {
+            "name": "Adjust EPS input",
+            "type": "primary",
+            "next_step": "adjust-eps-input"
+          },
+          {
+            "name": "Run EPS",
+            "type": "primary",
+            "next_step": "select-existing-project-for-run-eps"
+          },
+          {
+            "name": "Load EPS results",
+            "type": "primary",
+            "next_step": "select-eps-execution"
+          },
+          {
+            "name": "Explore EPS results",
+            "type": "primary",
+            "next_step": "explore-eps-results",
+            "enable_if_state": "execution.success"
+          },
+          {
+            "name": "Add profiles",
+            "type": "subheader"
+          },
+          {
+            "name": "Generate energy profiles template",
+            "type": "primary",
+            "next_step": "generate-profile-template"
+          },
+          {
+            "name": "Upload energy profiles template",
+            "type": "primary",
+            "next_step": "upload-profiles"
+          },
+          {
+            "name": "Configure scenarios",
+            "type": "header"
+          },
+          {
+            "name": "Configure Heat Network Hub",
+            "type": "primary",
+            "next_step": "energy-hub"
+          },
+          {
+            "name": "Heat Network Hub Dashboard",
+            "type": "primary",
+            "next_step": "hub-dashboard"
+          },
+          {
+            "name": "Optimise Heat Network hub",
+            "type": "header"
+          },
+          {
+            "name": "Generate cost information template",
+            "type": "primary",
+            "next_step": "generate-cost-information-template"
+          },
+          {
+            "name": "Upload cost information template",
+            "type": "primary",
+            "next_step": "upload-cost-information-template"
+          },
+          {
+            "name": "Optimize heat network",
+            "type": "subheader"
+          },
+          {
+            "name": "ESDL validator",
+            "type": "primary",
+            "disabled": false,
+            "next_step": "able_omotes_validator"
+          },
+          {
+            "name": "Mesido optimization",
+            "type": "primary",
+            "disabled": false,
+            "next_step": "able_omotes_base_steps_with_table"
+          },
+          {
+            "name": "Simulate total energy system",
+            "type": "header"
+          },
+          {
+            "name": "Run Essim",
+            "type": "primary",
+            "next_step": "essim"
+          }
+        ]
+      },
+      {
+        "id": "create-project",
+        "name": "Create Project",
+        "description": "",
+        "type": "custom",
+        "component": "eps-create-project",
+        "url": "https://eps.ceh.hesi.energy/api/projects/",
+        "next_step": "home"
+      },
+      {
+        "id": "adjust-eps-input",
+        "name": "Adjust EPS input",
+        "description": "",
+        "type": "choice",
+        "options": [
+          {
+            "name": "Download project file",
+            "description": "If you want to inspect the KvK data or modify input data, you can download a project file.",
+            "next_step": "select-existing-project-for-download",
+            "type": "primary"
+          },
+          {
+            "name": "Upload project file",
+            "description": "An adjusted project file can be uploaded to serve as input for a new EPS run. This file can then be selected in the next step: Run EPS.",
+            "next_step": "select-existing-project-for-upload",
+            "type": "primary"
+          }
+        ]
+      },
+      {
+        "id": "select-existing-project-for-download",
+        "name": "Select existing project",
+        "description": "Please select the project for which you would like to download a project file.",
+        "type": "select",
+        "config": {
+          "multiple": false,
+          "label_fields": [
+            "name"
+          ],
+          "value_field": "id",
+          "choices_attr": "projects"
+        },
+        "data": {
+          "from_url": {
+            "url": "https://eps.ceh.hesi.energy/api/projects/",
+            "method": "GET",
+            "headers": {
+              "Accept": "application/json"
+            }
+          },
+          "to_state": {},
+          "output_wrapper_variable": "project"
+        },
+        "next_step": "select-project-file-for-download"
+      },
+      {
+        "id": "select-project-file-for-download",
+        "name": "Select project file",
+        "description": "Please select the project file you would like to download.",
+        "type": "select",
+        "config": {
+          "multiple": false,
+          "label_fields": [
+            "name"
+          ],
+          "value_field": "id",
+          "choices_attr": "file_names"
+        },
+        "data": {
+          "from_url": {
+            "url": "https://eps.ceh.hesi.energy/api/projects/{{project_id}}/files",
+            "request_params": [
+              {
+                "name": "project_id",
+                "parameter_name": "project.id"
+              }
+            ],
+            "method": "GET",
+            "headers": {
+              "Accept": "application/json"
+            }
+          },
+          "to_state": {},
+          "output_wrapper_variable": "file"
+        },
+        "next_step": "download-project-file"
+      },
+      {
+        "id": "download-project-file",
+        "name": "Download project file",
+        "description": "By clicking the button below you can download the selected project file.",
+        "type": "download_file",
+        "source": {
+          "url": "https://eps.ceh.hesi.energy/api/projects/{project_id}/files/{file_name}",
+          "request_params": {
+            "project_id": "project.id",
+            "file_name": "file.id"
+          }
+        }
+      },
+      {
+        "id": "select-existing-project-for-upload",
+        "name": "Select existing project",
+        "description": "Please select the project for which you would like to upload a project file.",
+        "type": "select",
+        "config": {
+          "multiple": false,
+          "label_fields": [
+            "name"
+          ],
+          "value_field": "id",
+          "choices_attr": "projects"
+        },
+        "data": {
+          "from_url": {
+            "url": "https://eps.ceh.hesi.energy/api/projects/",
+            "method": "GET",
+            "headers": {
+              "Accept": "application/json"
+            }
+          },
+          "to_state": {},
+          "output_wrapper_variable": "project"
+        },
+        "next_step": "upload-project-file"
+      },
+      {
+        "id": "upload-project-file",
+        "name": "Upload project file",
+        "description": "Note: When uploading a project file with the same name as a previous project file, the previous file will be overwritten!",
+        "type": "upload_file",
+        "target": {
+          "url": "https://eps.ceh.hesi.energy/api/uploads/",
+          "request_params": {
+            "project_id": "project.id"
+          },
+          "response_params": {
+            "name": "file_name"
+          }
+        },
+        "success_text": "The newly uploaded file can be used to start a new EPS run."
+      },
+      {
+        "id": "select-existing-project-for-run-eps",
+        "name": "Select existing project",
+        "description": "",
+        "type": "select",
+        "multiple": false,
+        "target_variable": "project",
+        "config": {
+          "multiple": false,
+          "choices_attr": "projects",
+          "label_fields": [
+            "id",
+            "name"
+          ],
+          "value_field": "id"
+        },
+        "data": {
+          "from_url": {
+            "url": "https://eps.ceh.hesi.energy/api/projects/",
+            "method": "GET",
+            "headers": {
+              "Accept": "application/json"
+            }
+          },
+          "to_state": {},
+          "output_wrapper_variable": "project"
+        },
+        "next_step": "run-the-eps"
+      },
+      {
+        "id": "run-the-eps",
+        "name": "Run the EPS",
+        "description": "",
+        "type": "custom",
+        "component": "eps-service",
+        "url": "https://eps.ceh.hesi.energy/api/eps/",
+        "target": {
+          "request_params": {
+            "project_id": "project.id"
+          },
+          "user_response_spec": {
+            "0": {
+              "message": "Failed starting the EPS."
+            },
+            "200": {
+              "message": "EPS started successfully! It can take up to 45 minutes for the EPS to complete. When it is complete, the results can be found under 'Resultaten' in the EPS Web environment."
+            },
+            "429": {
+              "message": "It is currently busy on the server. We cannot start an EPS execution at this time. Please try again at a later time."
+            }
+          }
+        }
+      },
+      {
+        "id": "select-eps-execution",
+        "name": "Select EPS execution",
+        "description": "",
+        "label": "Choose the EPS execution from which to load the results as a baseline energy system ESDL in the Map Editor.",
+        "type": "select",
+        "config": {
+          "multiple": false,
+          "choices_attr": "executions",
+          "label_fields": [
+            "project.name",
+            "id",
+            {
+              "label": "complete",
+              "map": {
+                "true": "Complete",
+                "false": "Failed"
+              },
+              "default": "Processing"
+            }
+          ],
+          "value_field": "id"
+        },
+        "data": {
+          "from_url": {
+            "url": "https://eps.ceh.hesi.energy/api/eps/?gdf=true",
+            "method": "GET",
+            "headers": {
+              "Accept": "application/json"
+            }
+          },
+          "to_state": {},
+          "output_wrapper_variable": "execution"
+        },
+        "button_text": "Load EPS results",
+        "next_step": "load-eps"
+      },
+      {
+        "id": "load-eps",
+        "name": "Load EPS",
+        "description": "Please wait a moment while we load the EPS output as ESDL. This ESDL contains the energy system with no measures applied. When the EPS is loaded, please continue.",
+        "type": "esdl-service",
+        "config": {
+          "state_params": {
+            "execution_id": "execution.id"
+          }
+        },
+        "button_text": "Confirm EPS loaded",
+        "service": {
+          "id": "9bd2f969-f240-4b26-ace5-2e03fbc04f12",
+          "name": "Visualize EPS",
+          "headers": {
+            "Accept": "application/esdl+xml",
+            "User-Agent": "ESDL Mapeditor/0.1"
+          },
+          "url": "https://eps.ceh.hesi.energy/api/eps/<execution_id>/esdl/variant",
+          "auto": true,
+          "http_method": "post",
+          "type": "json",
+          "result": [
+            {
+              "code": 200,
+              "action": "esdl"
+            }
+          ],
+          "query_parameters": [
+            {
+              "location": "url",
+              "parameter_name": "execution_id"
+            }
+          ],
+          "with_jwt_token": true
+        }
+      },
+      {
+        "id": "explore-eps-results",
+        "name": "Explore EPS results",
+        "description": "",
+        "type": "custom",
+        "component": "eps-inspect-result",
+        "custom_data": {
+          "url": "https://eps.ceh.hesi.energy/api/eps/{execution_id}/pand/{pand_bagid}"
+        }
+      },
+      {
+        "id": "generate-profile-template",
+        "name": "Generate profile template",
+        "description": "",
+        "type": "custom",
+        "component": "pdtoolsuite-generate-profile-template"
+      },
+      {
+        "id": "upload-profiles",
+        "name": "Upload profiles",
+        "type": "custom",
+        "component": "pdtoolsuite-upload-profiles"
+      },
+      {
+        "id": "energy-hub",
+        "name": "Energy Hub",
+        "description": "",
+        "type": "custom",
+        "component": "pdtoolsuite-init-energy-hub",
+        "service": {
+          "id": "9bd2f969-f240-4b26-ace5-2e83fbc04b16",
+          "name": "EPS Energy Hub",
+          "headers": {
+            "Accept": "application/esdl+xml",
+            "User-Agent": "ESDL Mapeditor/0.1"
+          },
+          "url": "https://eps.ceh.hesi.energy/api/energy_hubs/",
+          "http_method": "post",
+          "type": "send_esdl_json",
+          "body": "base64_encoded",
+          "query_parameters": [
+            {
+              "parameter_name": "building_ids",
+              "location": "body"
+            }
+          ],
+          "result": [
+            {
+              "code": 200,
+              "action": "esdl"
+            }
+          ],
+          "with_jwt_token": true
+        }
+      },
+      {
+        "id": "hub-dashboard",
+        "name": "Heat Network Hub Dashboard",
+        "description": "",
+        "type": "text",
+        "data": {
+          "from_config": {
+            "text": "PLACEHOLDER"
+          }
+        }
+      },
+      {
+        "id": "generate-cost-information-template",
+        "name": "Generate cost information template",
+        "description": "",
+        "type": "custom",
+        "component": "cost-information-generate-template"
+      },
+      {
+        "id": "upload-cost-information-template",
+        "name": "Upload cost information template",
+        "description": "",
+        "type": "custom",
+        "component": "cost-information-upload-template"
+      },
+      {
+        "id": "able_omotes_base_steps_with_table",
+        "type": "composite",
+        "config": {
+          "step_ids": [
+            "able_omotes_select_name",
+            "able_omotes_select_workflow_type",
+            "able_omotes_other_input_parameters",
+            "able_omotes_start_run",
+            "able_omotes_runs_table"
+          ]
+        },
+        "next_step": "able_omotes_base_steps_with_table"
+      },
+      {
+        "id": "able_omotes_select_name",
+        "name": "New optimization/simulation",
+        "type": "json-form2",
+        "data": {
+          "from_config": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "run_name": {
+                  "type": "string",
+                  "minLength": 3,
+                  "title": "Name"
+                }
+              },
+              "required": [
+                "run_name"
+              ]
+            }
+          },
+          "to_state": {}
+        },
+        "next_step": "able_omotes_base_steps_with_table",
+        "next_step_trigger": "input_change"
+      },
+      {
+        "id": "able_omotes_select_workflow_type",
+        "name": "",
+        "description": "Select the Omotes workflow type for the calculation:",
+        "type": "select",
+        "config": {
+          "multiple": false,
+          "label_fields": [
+            "description"
+          ],
+          "value_field": "id"
+        },
+        "data": {
+          "from_url": {
+            "url": "http://omotes-rest:9200/workflow/"
+          },
+          "to_state": {},
+          "output_wrapper_variable": "selected_workflow_type"
+        },
+        "next_step": "able_omotes_base_steps_with_table",
+        "next_step_trigger": "input_change"
+      },
+      {
+        "id": "able_omotes_other_input_parameters",
+        "name": "",
+        "type": "json-form2",
+        "config": {
+          "data_from_variable": "selected_workflow_type"
+        },
+        "data": {
+          "from_state": {
+            "selected_workflow_type": "selected_workflow_type"
+          },
+          "to_state": {
+          },
+          "output_wrapper_variable": "input_params_dict"
+        },
+        "next_step": "able_omotes_base_steps_with_table",
+        "next_step_trigger": "input_change"
+      },
+      {
+        "id": "able_omotes_start_run",
+        "name": "",
+        "description": "",
+        "type": "esdl-service",
+        "config": {
+          "state_params": {
+            "workflow_type": "selected_workflow_type.id",
+            "input_params_dict": "input_params_dict",
+            "run_name": "run_name"
+          }
+        },
+        "service": {
+          "id": "74c9d1a2-c92a-46ed-a7e4-9931971cbb21",
+          "description": "",
+          "name": "",
+          "headers": {
+            "User-Agent": "ESDL Mapeditor/1.0",
+            "Content-Type": "application/json"
+          },
+          "url": "http://omotes-rest:9200/job/",
+          "http_method": "post",
+          "type": "send_esdl",
+          "send_email_in_post_body_parameter": "user_name",
+          "query_parameters": [
+            {
+              "name": "job_name",
+              "description": "Run and job name",
+              "parameter_name": "run_name",
+              "location": "body"
+            },
+            {
+              "name": "workflow_type",
+              "description": "Unique name of the workflow",
+              "parameter_name": "workflow_type",
+              "location": "body"
+            },
+            {
+              "name": "input_params_dict",
+              "description": "Input parameters (can be empty)",
+              "parameter_name": "input_params_dict",
+              "location": "body"
+            },
+            {
+              "name": "timeout_after_s",
+              "description": "Job timeout in seconds",
+              "value": 86400,
+              "location": "body"
+            }
+          ],
+          "body": "json_text",
+          "body_config": {
+            "type": "json",
+            "parameters": [
+              {
+                "type": "esdl",
+                "encoding": "base64_encoded",
+                "parameter": "input_esdl"
+              }
+            ]
+          },
+          "result": [
+            {
+              "code": 200,
+              "action": "save_model_run",
+              "external_model_name": "omotes",
+              "external_model_id_response_param": "job_id",
+              "run_name_state_param": "run_name"
+            }
+          ],
+          "with_jwt_token": false,
+          "state_params": true
+        },
+        "button_text": "Start model run",
+        "next_step": "able_omotes_base_steps_with_table",
+        "workflow_engine": {
+          "run_name": "state_params.run_name",
+          "workflow_engine_next_step": "omotes_retrieve_run_progress_results"
+        }
+      },
+      {
+        "id": "omotes_retrieve_run_progress_results",
+        "type": "workflow-engine-monitor",
+        "monitor_name": "Running Omotes Calculation...",
+        "config": {
+          "model_run_result_polling": {
+            "query_list": [
+              {
+                "url": "http://omotes-rest:9200/job/<MODEL_JOB_ID>",
+                "response_mapping": {
+                  "status": "status",
+                  "progress_fraction": "progress_fraction",
+                  "progress_message": "progress_message",
+                  "output_esdl": "output_esdl",
+                  "logs": "logs",
+                  "esdl_feedback": "esdl_feedback"
+                },
+                "model_specific_response_mapping": {
+                  "registered_at": "registered_at",
+                  "running_at": "running_at",
+                  "stopped_at": "stopped_at"
+                },
+                "esdl_encoding": "base64_encoded",
+                "status_mapping": {
+                  "SUBMITTED": [
+                    "REGISTERED",
+                    "ENQUEUED"
+                  ],
+                  "RUNNING": [
+                    "RUNNING"
+                  ],
+                  "SUCCEEDED": [
+                    "FINISHED",
+                    "SUCCEEDED"
+                  ],
+                  "CANCELLED": [
+                    "CANCELLED"
+                  ],
+                  "ERROR": [
+                    "TIMEOUT",
+                    "ERROR"
+                  ]
+                }
+              }
+            ],
+            "retry_interval_seconds": 2,
+            "maximum_wait_seconds": 86400
+          }
+        }
+      },
+      {
+        "id": "able_omotes_runs_table",
+        "name": "Results overview",
+        "description": "",
+        "type": "table-external-model",
+        "config": {
+          "model_short_name": "omotes",
+          "result_animation": {},
+          "has_feedback_messages": true,
+          "delete_result_url": "http://omotes-rest:9200/job/<MODEL_JOB_ID>",
+          "load_input_esdl": true,
+          "time_series_xlsx_download": {
+            "esdl_object_name_field": "assetName",
+            "excel_sheets_per_table": [
+              {
+                "name_postfix": "HeatIn.Q_m3_per_s",
+                "field_name_recorded_per_esdl_object": "HeatIn.Q"
+              },
+              {
+                "name_postfix": "Heat_flow_W",
+                "field_name_recorded_per_esdl_object": "Heat_flow"
+              },
+              {
+                "name_postfix": "PostProc.Velocity_m_per_s",
+                "field_name_recorded_per_esdl_object": "PostProc.Velocity"
+              }
+            ]
+          }
+        },
+        "data": {
+          "from_socket": {
+            "event": "get_external_model_runs_for_user",
+            "params": {
+              "external_model_name": "omotes"
+            }
+          },
+          "output_wrapper_variable": "model_run"
+        },
+        "with_jwt_token": true
+      },
+      {
+        "id": "able_omotes_validator",
+        "type": "composite",
+        "config": {
+          "step_ids": [
+            "able_validator_select_schema",
+            "able_validator_validate_esdl"
+          ]
+        },
+        "next_step": "able_omotes_validator"
+      },
+      {
+        "id": "able_validator_select_schema",
+        "name": "Select schema",
+        "description": "",
+        "type": "select",
+        "config": {
+          "multiple": false,
+          "label_fields": [
+            "name"
+          ],
+          "value_field": "id"
+        },
+        "data": {
+          "from_url": {
+            "url": "http://esdl-validator:5000/schema?name=Optimizer%20validation%20schema&name=Simulator%20validation%20schema"
+          },
+          "to_state": {},
+          "output_wrapper_variable": "schema"
+        },
+        "next_step": "able_omotes_validator",
+        "next_step_trigger": "input_change"
+      },
+      {
+        "id": "able_validator_validate_esdl",
+        "name": "",
+        "type": "esdl-service",
+        "config": {
+          "state_params": {
+            "schemas": "schema.id"
+          }
+        },
+        "service": {
+          "id": "64c9d1a2-c92a-46ed-a7e4-9931971cbb20",
+          "name": "Validate ESDL against schema",
+          "description": "",
+          "headers": {
+            "User-Agent": "ESDL Mapeditor/0.1",
+            "Content-Type": "application/xml;charset=UTF-8"
+          },
+          "url": "http://esdl-validator:5000/validationToMessages",
+          "http_method": "post",
+          "type": "send_esdl",
+          "query_parameters": [
+            {
+              "name": "Schemas",
+              "description": "ID of the schema to validate this ESDL against",
+              "parameter_name": "schemas"
+            }
+          ],
+          "body": "",
+          "result": [
+            {
+              "code": 200,
+              "action": "asset_feedback"
+            }
+          ],
+          "with_jwt_token": false,
+          "state_params": true
+        },
+        "button_text": "Validate"
+      },
+      {
+        "id": "essim",
+        "name": "Essim",
+        "type": "composite",
+        "config": {
+          "step_ids": [
+            "select_name_and_time_step_essim",
+            "select_simulation_period_essim",
+            "select_custom_period_essim",
+            "start_run_essim",
+            "runs_table_essim"
+          ]
+        },
+        "next_step": "essim"
+      },
+      {
+        "id": "select_name_and_time_step_essim",
+        "type": "json-form2",
+        "data": {
+          "from_config": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "run_name": {
+                  "type": "string",
+                  "minLength": 3,
+                  "title": "Name"
+                },
+                "time_step": {
+                  "type": "string",
+                  "oneOf": [
+                    {
+                      "const": "1h",
+                      "title": "1 hour"
+                    },
+                    {
+                      "const": "15m",
+                      "title": "15 minutes"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "run_name",
+                "time_step"
+              ]
+            },
+            "uischema": {
+              "elements": [
+                {
+                  "scope": "#/properties/run_name",
+                  "type": "Control"
+                },
+                {
+                  "scope": "#/properties/time_step",
+                  "type": "Control"
+                }
+              ],
+              "type": "VerticalLayout"
+            },
+            "formData": {
+              "time_step": "1h"
+            }
+          },
+          "to_state": {}
+        },
+        "next_step": "essim",
+        "next_step_trigger": "input_change"
+      },
+      {
+        "id": "select_simulation_period_essim",
+        "name": "",
+        "description": "Please select the simulation period:",
+        "type": "select",
+        "config": {
+          "placeholder": "Select simulation period",
+          "multiple": false,
+          "label_fields": [
+            "description"
+          ],
+          "value_field": "id"
+        },
+        "data": {
+          "from_config": [
+            {
+              "id": "year2019",
+              "description": "Year 2019",
+              "formData": {
+                "start_time": "2019-01-01T00:00:00+0100",
+                "end_time": "2020-01-01T00:00:00+0100"
+              },
+              "schema": {
+                "properties": {
+                  "start_time": {
+                    "format": "date-time",
+                    "type": "string"
+                  },
+                  "end_time": {
+                    "format": "date-time",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "start_time",
+                  "end_time"
+                ],
+                "type": "object"
+              },
+              "uischema": {
+                "elements": [
+                  {
+                    "scope": "#/properties/start_time",
+                    "type": "Control",
+                    "options": {
+                      "readonly": true
+                    }
+                  },
+                  {
+                    "scope": "#/properties/end_time",
+                    "type": "Control",
+                    "options": {
+                      "readonly": true
+                    }
+                  }
+                ],
+                "type": "VerticalLayout"
+              }
+            },
+            {
+              "id": "year2023",
+              "description": "Year 2023",
+              "formData": {
+                "start_time": "2023-01-01T00:00:00+0100",
+                "end_time": "2024-01-01T00:00:00+0100"
+              },
+              "schema": {
+                "properties": {
+                  "start_time": {
+                    "format": "date-time",
+                    "type": "string"
+                  },
+                  "end_time": {
+                    "format": "date-time",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "start_time",
+                  "end_time"
+                ],
+                "type": "object"
+              },
+              "uischema": {
+                "elements": [
+                  {
+                    "scope": "#/properties/start_time",
+                    "type": "Control",
+                    "options": {
+                      "readonly": true
+                    }
+                  },
+                  {
+                    "scope": "#/properties/end_time",
+                    "type": "Control",
+                    "options": {
+                      "readonly": true
+                    }
+                  }
+                ],
+                "type": "VerticalLayout"
+              }
+            },
+            {
+              "id": "custom",
+              "description": "custom period",
+              "formData": {},
+              "schema": {
+                "properties": {
+                  "start_time": {
+                    "format": "date-time",
+                    "type": "string"
+                  },
+                  "end_time": {
+                    "format": "date-time",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "start_time",
+                  "end_time"
+                ],
+                "type": "object"
+              },
+              "uischema": {
+                "elements": [
+                  {
+                    "scope": "#/properties/start_time",
+                    "type": "Control"
+                  },
+                  {
+                    "scope": "#/properties/end_time",
+                    "type": "Control"
+                  }
+                ],
+                "type": "VerticalLayout"
+              }
+            }
+          ],
+          "to_state": {},
+          "output_wrapper_variable": "selected_simulation_period_essim"
+        },
+        "next_step": "essim",
+        "next_step_trigger": "input_change"
+      },
+      {
+        "id": "select_custom_period_essim",
+        "name": "",
+        "type": "json-form2",
+        "config": {
+          "data_from_variable": "selected_simulation_period_essim"
+        },
+        "data": {
+          "from_state": {
+            "selected_simulation_period_essim": "selected_simulation_period_essim"
+          },
+          "to_state": {}
+        },
+        "next_step": "essim",
+        "next_step_trigger": "input_change"
+      },
+      {
+        "id": "start_run_essim",
+        "name": "",
+        "description": "",
+        "type": "esdl-service",
+        "config": {
+          "state_params": {
+            "run_name": "run_name",
+            "start_time": "start_time",
+            "end_time": "end_time",
+            "time_step": "time_step"
+          },
+          "datetimes_convert_Z": true
+        },
+        "service": {
+          "id": "74c9d1a2-c92a-46ed-a7e4-9942971cdd28",
+          "description": "",
+          "name": "",
+          "headers": {
+            "User-Agent": "ESDL Mapeditor/1.0",
+            "Accept": "application/json",
+            "Content-Type": "application/json"
+          },
+          "url": "http://localhost:8112/essim/simulation",
+          "http_method": "post",
+          "type": "send_esdl",
+          "send_email_in_post_body_parameter": "user_name",
+          "query_parameters": [
+            {
+              "name": "simulationDescription",
+              "description": "Simulation name",
+              "parameter_name": "run_name",
+              "location": "body"
+            },
+            {
+              "name": "startDate",
+              "description": "start date",
+              "parameter_name": "start_time",
+              "location": "body"
+            },
+            {
+              "name": "endDate",
+              "description": "end date",
+              "parameter_name": "end_time",
+              "location": "body"
+            },
+            {
+              "name": "timeStep",
+              "description": "time step",
+              "parameter_name": "time_step",
+              "location": "body"
+            },
+            {
+              "name": "influxURL",
+              "description": "influx url",
+              "value": "http://influxdb:8086",
+              "location": "body"
+            },
+            {
+              "name": "user",
+              "description": "Essim user",
+              "value": "mapeditor",
+              "location": "body"
+            }
+          ],
+          "body": "json_text",
+          "body_config": {
+            "type": "json",
+            "parameters": [
+              {
+                "type": "esdl",
+                "encoding": "base64_encoded",
+                "parameter": "esdlContents"
+              },
+              {
+                "type": "esdl_id",
+                "parameter": "scenarioID"
+              }
+            ]
+          },
+          "result": [
+            {
+              "code": 200,
+              "action": "save_model_run",
+              "external_model_name": "essim",
+              "external_model_id_response_param": "id",
+              "run_name_state_param": "run_name"
+            }
+          ],
+          "with_jwt_token": false,
+          "state_params": true
+        },
+        "button_text": "Start model run",
+        "next_step": "essim",
+        "workflow_engine": {
+          "run_name": "state_params.run_name",
+          "workflow_engine_next_step": "retrieve_run_progress_results"
+        }
+      },
+      {
+        "id": "retrieve_run_progress_results",
+        "monitor_name": "Running Essim Calculation...",
+        "type": "workflow-engine-monitor",
+        "config": {
+          "model_run_result_polling": {
+            "query_list": [
+              {
+                "url": "http://localhost:8112/essim/simulation/<MODEL_JOB_ID>",
+                "response_mapping": {
+                  "status": "status.state",
+                  "progress_fraction": "status.description"
+                },
+                "model_specific_response_mapping": {
+                  "scenarioID": "scenarioID",
+                  "simRunDate": "simRunDate",
+                  "dashboardURL": "dashboardURL"
+                },
+                "esdl_encoding": "base64_encoded",
+                "status_mapping": {
+                  "SUBMITTED": [
+                    "CREATED"
+                  ],
+                  "RUNNING": [
+                    "RUNNING"
+                  ],
+                  "SUCCEEDED": [
+                    "COMPLETE"
+                  ],
+                  "CANCELLED": [
+                    "CANCELLED"
+                  ],
+                  "ERROR": [
+                    "TIMEOUT",
+                    "ERROR"
+                  ]
+                }
+              }
+            ],
+            "retry_interval_seconds": 2,
+            "maximum_wait_seconds": 3600
+          }
+        }
+      },
+      {
+        "id": "runs_table_essim",
+        "name": "Results overview",
+        "description": "",
+        "type": "table-external-model",
+        "config": {
+          "model_short_name": "essim",
+          "has_feedback_messages": false,
+          "result_external_link": {
+            "description": "Open Dashboard",
+            "value_database_key": "model_specific_output.dashboardURL"
+          },
+          "delete_result_url": "",
+          "time_series_xlsx_download": {
+            "filter_on_tag": {
+              "tag_name": "simulationRun",
+              "value_database_key": "model_job_id"
+            },
+            "esdl_object_name_field": "assetName",
+            "excel_sheets_per_table": [
+              {
+                "name_postfix": "PinW",
+                "field_name_recorded_per_esdl_object": "allocationPower",
+                "field_names_unrelated_to_esdl_objects": [
+                  "imbalancePower"
+                ],
+                "exclude_values": {
+                  "field_name": "capability",
+                  "values_to_exclude": [
+                    "Transport"
+                  ]
+                }
+              },
+              {
+                "name_postfix": "EinJ",
+                "field_name_recorded_per_esdl_object": "allocationEnergy",
+                "field_names_unrelated_to_esdl_objects": [
+                  "imbalanceEnergy"
+                ],
+                "exclude_values": {
+                  "field_name": "capability",
+                  "values_to_exclude": [
+                    "Transport"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        "data": {
+          "from_socket": {
+            "event": "get_external_model_runs_for_user",
+            "params": {
+              "external_model_name": "essim"
+            }
+          }
+        },
+        "with_jwt_token": true
+      }
+    ]
+  }
+]
