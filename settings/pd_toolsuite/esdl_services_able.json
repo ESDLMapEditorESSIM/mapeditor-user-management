@@ -117,7 +117,7 @@
         "description": "",
         "type": "custom",
         "component": "eps-create-project",
-        "url": "https://eps.ceh.hesi.energy/api/projects/",
+        "url": "https://eps.able.hesi.energy/api/projects/",
         "next_step": "home"
       },
       {
@@ -155,7 +155,7 @@
         },
         "data": {
           "from_url": {
-            "url": "https://eps.ceh.hesi.energy/api/projects/",
+            "url": "https://eps.able.hesi.energy/api/projects/",
             "method": "GET",
             "headers": {
               "Accept": "application/json"
@@ -181,7 +181,7 @@
         },
         "data": {
           "from_url": {
-            "url": "https://eps.ceh.hesi.energy/api/projects/{{project_id}}/files",
+            "url": "https://eps.able.hesi.energy/api/projects/{{project_id}}/files",
             "request_params": [
               {
                 "name": "project_id",
@@ -204,7 +204,7 @@
         "description": "By clicking the button below you can download the selected project file.",
         "type": "download_file",
         "source": {
-          "url": "https://eps.ceh.hesi.energy/api/projects/{project_id}/files/{file_name}",
+          "url": "https://eps.able.hesi.energy/api/projects/{project_id}/files/{file_name}",
           "request_params": {
             "project_id": "project.id",
             "file_name": "file.id"
@@ -226,7 +226,7 @@
         },
         "data": {
           "from_url": {
-            "url": "https://eps.ceh.hesi.energy/api/projects/",
+            "url": "https://eps.able.hesi.energy/api/projects/",
             "method": "GET",
             "headers": {
               "Accept": "application/json"
@@ -243,7 +243,7 @@
         "description": "Note: When uploading a project file with the same name as a previous project file, the previous file will be overwritten!",
         "type": "upload_file",
         "target": {
-          "url": "https://eps.ceh.hesi.energy/api/uploads/",
+          "url": "https://eps.able.hesi.energy/api/uploads/",
           "request_params": {
             "project_id": "project.id"
           },
@@ -271,7 +271,7 @@
         },
         "data": {
           "from_url": {
-            "url": "https://eps.ceh.hesi.energy/api/projects/",
+            "url": "https://eps.able.hesi.energy/api/projects/",
             "method": "GET",
             "headers": {
               "Accept": "application/json"
@@ -288,7 +288,7 @@
         "description": "",
         "type": "custom",
         "component": "eps-service",
-        "url": "https://eps.ceh.hesi.energy/api/eps/",
+        "url": "https://eps.able.hesi.energy/api/eps/",
         "target": {
           "request_params": {
             "project_id": "project.id"
@@ -331,7 +331,7 @@
         },
         "data": {
           "from_url": {
-            "url": "https://eps.ceh.hesi.energy/api/eps/?gdf=true",
+            "url": "https://eps.able.hesi.energy/api/eps/?gdf=true",
             "method": "GET",
             "headers": {
               "Accept": "application/json"
@@ -361,7 +361,7 @@
             "Accept": "application/esdl+xml",
             "User-Agent": "ESDL Mapeditor/0.1"
           },
-          "url": "https://eps.ceh.hesi.energy/api/eps/<execution_id>/esdl/variant",
+          "url": "https://eps.able.hesi.energy/api/eps/<execution_id>/esdl/variant",
           "auto": true,
           "http_method": "post",
           "type": "json",
@@ -387,7 +387,7 @@
         "type": "custom",
         "component": "eps-inspect-result",
         "custom_data": {
-          "url": "https://eps.ceh.hesi.energy/api/eps/{execution_id}/pand/{pand_bagid}"
+          "url": "https://eps.able.hesi.energy/api/eps/{execution_id}/pand/{pand_bagid}"
         }
       },
       {
@@ -416,7 +416,7 @@
             "Accept": "application/esdl+xml",
             "User-Agent": "ESDL Mapeditor/0.1"
           },
-          "url": "https://eps.ceh.hesi.energy/api/energy_hubs/",
+          "url": "https://eps.able.hesi.energy/api/energy_hubs/",
           "http_method": "post",
           "type": "send_esdl_json",
           "body": "base64_encoded",
