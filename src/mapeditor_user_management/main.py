@@ -1,14 +1,20 @@
 import json
+
 from dotenv import load_dotenv
 
-from mapeditor_user_management.constants import Mode, KeycloakEditMode, EditMode, MapEditorSettingType
+from mapeditor_user_management.constants import (
+    EditMode,
+    KeycloakEditMode,
+    MapEditorSettingType,
+    Mode,
+)
 from mapeditor_user_management.keycloak_admin_interface import KeycloakAdminInterface
 from mapeditor_user_management.mongo_interface import MongoInterface
 from mapeditor_user_management.utils import (
     deep_update,
     delete_from_dict,
-    setup_arg_parser,
     parse_users,
+    setup_arg_parser,
 )
 
 
@@ -177,8 +183,6 @@ def main():
                     username, args.setting_name, setting_value
                 )
         print(f"Edited users settings with config: '{args.setting_value_file}'")
-
-
 
     print("User management finished")
 
