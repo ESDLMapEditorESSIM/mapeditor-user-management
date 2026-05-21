@@ -246,9 +246,9 @@
           "placeholder": "Select KPI modules",
           "multiple": true,
           "label_fields": [
-            "description"
+            "title"
           ],
-          "value_field": "id"
+          "value_field": "calculator_id"
         },
         "data": {
           "from_url": {
