@@ -684,5 +684,37 @@
         "button_text": "Close"
       }
     ]
+  },
+  {
+    "id": "convert_esdl_to_geopackage",
+    "name": "Convert ESDL to geopackage",
+    "explanation": "Download ESDL information as a geopackage file",
+    "type": "esdl-service",
+    "headers": {
+        "Accept": "application/esdl+xml",
+        "User-Agent": "ESDL Mapeditor/0.1"
+    },
+    "url": "http://esdl-geopackage:8310/api/convert/",
+    "http_method": "post",
+    "query_parameters": [],
+    "body_config": {
+        "type": "json",
+        "parameters": [
+            {
+                "type": "esdl",
+                "parameter": "esdl",
+                "encoding": "base64_encoded"
+            }
+        ]
+    },
+    "result": [
+        {
+            "action": "download_file",
+            "encoding": "base64_encoded",
+            "json_field": "gpkg",
+            "filename": "ESDL_information.gpkg",
+            "content_type": "application/x-sqlite3"
+        }
+    ]
   }
 ]
