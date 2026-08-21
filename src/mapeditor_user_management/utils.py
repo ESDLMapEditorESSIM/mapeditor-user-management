@@ -147,11 +147,13 @@ def setup_arg_parser() -> argparse.Namespace:
     )
 
     args = parser.parse_args()
-    if not args.mode and os.environ.get("MODE"):
-        # reparse the arguments:
-        args = parser.parse_args([os.environ.get("MODE")] + sys.argv[1:])
-    else:
-        raise IOError("A 'MODE' must be supplied as the first argument or as ENV VAR.")
+    if not args.mode:
+        mode = os.environ.get("MODE")
+        if not mode:
+            raise IOError(
+                "A 'MODE' must be supplied as the first argument or as ENV VAR."
+            )
+        args = parser.parse_args([mode] + sys.argv[1:])
     return args
 
 
