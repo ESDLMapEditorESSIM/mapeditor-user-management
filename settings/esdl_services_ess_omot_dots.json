@@ -533,6 +533,7 @@
           "step_ids": [
             "omotes_select_name",
             "omotes_select_workflow_type",
+            "omotes_workflow_version",
             "omotes_other_input_parameters",
             "omotes_start_run",
             "omotes_runs_table"
@@ -568,7 +569,7 @@
       {
         "id": "omotes_select_workflow_type",
         "name": "",
-        "description": "Select the Omotes workflow type for the calculation:",
+        "description": "Select the workflow type:",
         "type": "select",
         "config": {
           "multiple": false,
@@ -579,10 +580,30 @@
         },
         "data": {
           "from_url": {
-            "url": "http://omotes-rest:9200/workflow/"
+            "url": "http://omotes-orchestrator:9200/workflow/"
           },
           "to_state": {},
           "output_wrapper_variable": "selected_workflow_type"
+        },
+        "next_step": "omotes_base_steps_with_table",
+        "next_step_trigger": "input_change"
+      },
+      {
+        "id": "omotes_workflow_version",
+        "name": "",
+        "description": "Select the workflow version:",
+        "type": "select",
+        "config": {
+          "multiple": false,
+          "data_from_variable": "selected_workflow_type",
+          "choices_attr": "versions"
+        },
+        "data": {
+          "from_state": {
+            "selected_workflow_type": "selected_workflow_type"
+          },
+          "to_state": {},
+          "output_wrapper_variable": "selected_workflow_version"
         },
         "next_step": "omotes_base_steps_with_table",
         "next_step_trigger": "input_change"
@@ -598,8 +619,7 @@
           "from_state": {
             "selected_workflow_type": "selected_workflow_type"
           },
-          "to_state": {
-          },
+          "to_state": {},
           "output_wrapper_variable": "input_params_dict"
         },
         "next_step": "omotes_base_steps_with_table",
@@ -613,6 +633,7 @@
         "config": {
           "state_params": {
             "workflow_type": "selected_workflow_type.id",
+            "workflow_version": "selected_workflow_version",
             "input_params_dict": "input_params_dict",
             "run_name": "run_name"
           }
@@ -625,7 +646,7 @@
             "User-Agent": "ESDL Mapeditor/1.0",
             "Content-Type": "application/json"
           },
-          "url": "http://omotes-rest:9200/job/",
+          "url": "http://omotes-orchestrator:9200/job/",
           "http_method": "post",
           "type": "send_esdl",
           "send_email_in_post_body_parameter": "user_name",
@@ -646,6 +667,12 @@
               "name": "input_params_dict",
               "description": "Input parameters (can be empty)",
               "parameter_name": "input_params_dict",
+              "location": "body"
+            },
+            {
+              "name": "version",
+              "description": "Workflow version",
+              "parameter_name": "workflow_version",
               "location": "body"
             },
             {
@@ -693,7 +720,7 @@
           "model_run_result_polling": {
             "query_list": [
               {
-                "url": "http://omotes-rest:9200/job/<MODEL_JOB_ID>",
+                "url": "http://omotes-orchestrator:9200/job/<MODEL_JOB_ID>",
                 "response_mapping": {
                   "status": "status",
                   "progress_fraction": "progress_fraction",
@@ -711,6 +738,9 @@
                 "status_mapping": {
                   "SUBMITTED": [
                     "REGISTERED",
+                    "ENQUEUED"
+                  ],
+                  "QUEUED": [
                     "ENQUEUED"
                   ],
                   "RUNNING": [
@@ -744,7 +774,7 @@
           "model_short_name": "omotes",
           "result_animation": {},
           "has_feedback_messages": true,
-          "delete_result_url": "http://omotes-rest:9200/job/<MODEL_JOB_ID>",
+          "delete_result_url": "http://omotes-orchestrator:9200/job/<MODEL_JOB_ID>",
           "load_input_esdl": true,
           "time_series_xlsx_download": {
             "esdl_object_name_field": "assetName",
@@ -977,8 +1007,7 @@
               }
             ]
           },
-          "to_state": {
-          },
+          "to_state": {},
           "output_wrapper_variable": "chosen_aquifer_row"
         },
         "next_step_trigger": "input_change"
@@ -1137,8 +1166,7 @@
               }
             ]
           },
-          "to_state": {
-          },
+          "to_state": {},
           "output_wrapper_variable": "chosen_aquifer_row"
         },
         "next_step_trigger": "input_change"
