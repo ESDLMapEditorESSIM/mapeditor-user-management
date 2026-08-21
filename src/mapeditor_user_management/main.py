@@ -74,8 +74,13 @@ def main():
             edit_usernames = [
                 user.username for user in parse_users(args.edit_users_from_csv)
             ]
+            edit_user_emails = [
+                user.email
+                for user in parse_users(args.edit_users_from_csv)
+                if user.email
+            ]
             mongo_usernames = [
-                user for user in edit_usernames if user in existing_users
+                user for user in mongo_usernames if user in edit_user_emails
             ]
 
         # edit keycloak user settings

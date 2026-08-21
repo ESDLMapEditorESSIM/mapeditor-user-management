@@ -1,0 +1,375 @@
+[
+  {
+    "id": "x12c4a2b-5eee-46f7-a225-87c5f85e666c",
+    "name": "DOTS",
+    "explanation": "Run, view and manage dots simulations",
+    "type": "vueworkflow",
+    "hide_step_history": true,
+    "workflow": [
+      {
+        "id": "dots_base_steps_with_table",
+        "type": "composite",
+        "config": {
+          "step_ids": [
+            "dots_select_name_start_duration_logs",
+            "dots_set_calc_services",
+            "dots_start_run",
+            "dots_runs_table"
+          ]
+        },
+        "next_step": "dots_base_steps_with_table"
+      },
+      {
+        "id": "dots_select_name_start_duration_logs",
+        "name": "New Run",
+        "type": "json-form2",
+        "data": {
+          "from_config": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "run_name": {
+                  "type": "string",
+                  "minLength": 3,
+                  "title": "Name"
+                },
+                "start_date_time": {
+                  "format": "date-time",
+                  "type": "string"
+                },
+                "simulation_duration_in_seconds": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "keep_logs_hours": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "log_level": {
+                  "type": "string",
+                  "oneOf": [
+                    {
+                      "const": "debug",
+                      "title": "debug"
+                    },
+                    {
+                      "const": "info",
+                      "title": "info"
+                    },
+                    {
+                      "const": "warn",
+                      "title": "warn"
+                    },
+                    {
+                      "const": "err",
+                      "title": "err"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "run_name",
+                "start_date_time",
+                "simulation_duration_in_seconds",
+                "keep_logs_hours",
+                "log_level"
+              ]
+            },
+            "uischema": {
+              "elements": [
+                {
+                  "scope": "#/properties/run_name",
+                  "type": "Control"
+                },
+                {
+                  "scope": "#/properties/start_date_time",
+                  "type": "Control"
+                },
+                {
+                  "scope": "#/properties/simulation_duration_in_seconds",
+                  "type": "Control"
+                },
+                {
+                  "scope": "#/properties/keep_logs_hours",
+                  "type": "Control"
+                },
+                {
+                  "scope": "#/properties/log_level",
+                  "type": "Control"
+                }
+              ],
+              "type": "VerticalLayout"
+            },
+            "formData": {
+              "start_date_time": "2020-08-11T00:00:00+0000",
+              "simulation_duration_in_seconds": 85500,
+              "keep_logs_hours": 24,
+              "log_level": "info"
+            }
+          },
+          "to_state": {}
+        },
+        "next_step": "dots_base_steps_with_table",
+        "next_step_trigger": "input_change"
+      },
+      {
+        "id": "dots_set_calc_services",
+        "description": "Calculation services config:",
+        "type": "code-editor",
+        "config": {
+          "language": "json",
+          "number_of_rows": 15
+        },
+        "data": {
+          "from_config": [
+            {
+              "esdl_type": "ElectricityDemand",
+              "calc_service_name": "edemandservice",
+              "service_image_url": "ghcr.io/dots-energy-services/edemandservice:latest",
+              "nr_of_models": 1
+            },
+            {
+              "esdl_type": "EConnection",
+              "calc_service_name": "emsservice",
+              "service_image_url": "ghcr.io/dots-energy-services/hemsworkshop:latest",
+              "nr_of_models": 1
+            },
+            {
+              "esdl_type": "EnergySystem",
+              "calc_service_name": "lvnetworkservice",
+              "service_image_url": "ghcr.io/dots-energy-services/lvnetworkservice:latest",
+              "nr_of_models": 1
+            },
+            {
+              "esdl_type": "PVInstallation",
+              "calc_service_name": "pvsystemservice",
+              "service_image_url": "ghcr.io/dots-energy-services/pvsystemservice:latest",
+              "nr_of_models": 1
+            },
+            {
+              "esdl_type": "EnvironmentalProfiles",
+              "calc_service_name": "EnvironmentalProfiles",
+              "service_image_url": "ghcr.io/dots-energy-services/weatherservice:latest",
+              "nr_of_models": 1
+            },
+            {
+              "esdl_type": "Battery",
+              "calc_service_name": "examplebatteryservice",
+              "service_image_url": "ghcr.io/dots-energy-services/examplebatteryservice:latest",
+              "nr_of_models": 1
+            }
+          ],
+          "to_state": {},
+          "output_wrapper_variable": "calculation_services"
+        },
+        "next_step": "dots_base_steps_with_table",
+        "next_step_trigger": "input_change"
+      },
+      {
+        "id": "dots_start_run",
+        "name": "",
+        "description": "",
+        "type": "esdl-service",
+        "config": {
+          "state_params": {
+            "run_name": "run_name",
+            "start_date_time": "start_date_time",
+            "simulation_duration_in_seconds": "simulation_duration_in_seconds",
+            "keep_logs_hours": "keep_logs_hours",
+            "log_level": "log_level",
+            "calculation_services": "calculation_services"
+          },
+          "datetimes_convert_Z": true
+        },
+        "service": {
+          "id": "74c9d1a2-c92a-46ed-a7e4-9931971cdd17",
+          "description": "",
+          "name": "",
+          "headers": {
+            "User-Agent": "ESDL Mapeditor/1.0",
+            "Accept": "application/json",
+            "Content-Type": "application/json"
+          },
+          "url": "http://localhost:8011/api/v1/simulation/start",
+          "http_method": "post",
+          "type": "send_esdl",
+          "send_email_in_post_body_parameter": "user_name",
+          "query_parameters": [
+            {
+              "name": "name",
+              "description": "Simulation name",
+              "parameter_name": "run_name",
+              "location": "body"
+            },
+            {
+              "name": "start_date",
+              "description": "start date",
+              "parameter_name": "start_date_time",
+              "location": "body"
+            },
+            {
+              "name": "simulation_duration_in_seconds",
+              "description": "simulation duration in seconds",
+              "parameter_name": "simulation_duration_in_seconds",
+              "location": "body"
+            },
+            {
+              "name": "keep_logs_hours",
+              "description": "keep logs hours",
+              "parameter_name": "keep_logs_hours",
+              "location": "body"
+            },
+            {
+              "name": "log_level",
+              "description": "log level",
+              "parameter_name": "log_level",
+              "location": "body"
+            },
+            {
+              "name": "calculation_services",
+              "description": "calculation services",
+              "parameter_name": "calculation_services",
+              "location": "body"
+            }
+          ],
+          "body": "json_text",
+          "body_config": {
+            "type": "json",
+            "parameters": [
+              {
+                "type": "esdl",
+                "encoding": "base64_encoded",
+                "parameter": "esdl_base64string"
+              }
+            ]
+          },
+          "result": [
+            {
+              "code": 200,
+              "action": "save_model_run",
+              "external_model_name": "dots",
+              "external_model_id_response_param": "simulation_id",
+              "run_name_state_param": "run_name"
+            }
+          ],
+          "with_jwt_token": false,
+          "state_params": true
+        },
+        "button_text": "Start simulation",
+        "next_step": "dots_base_steps_with_table",
+        "workflow_engine": {
+          "run_name": "state_params.run_name",
+          "workflow_engine_next_step": "dots_retrieve_run_progress_results"
+        }
+      },
+      {
+        "id": "dots_retrieve_run_progress_results",
+        "monitor_name": "Running DOTS Simulation...",
+        "type": "workflow-engine-monitor",
+        "config": {
+          "model_run_result_polling": {
+            "query_list": [
+              {
+                "url": "http://localhost:8011/api/v1/simulation/<MODEL_JOB_ID>",
+                "response_mapping": {
+                  "status": "simulation_status"
+                },
+                "model_specific_response_mapping": {
+                  "calculation_duration": "calculation_duration"
+                },
+                "esdl_encoding": "base64_encoded",
+                "status_mapping": {
+                  "SUBMITTED": [
+                    "all models registered"
+                  ],
+                  "RUNNING": [
+                    "all models deployed",
+                    "all podds are deleted"
+                  ],
+                  "SUCCEEDED": [
+                    "all models terminated successfully, the simulation has been terminated",
+                    "all models terminated successfully, the simulation has been terminated and pods are deleted"
+                  ],
+                  "CANCELLED": [],
+                  "ERROR": [
+                    "(a) model(s) terminated with an error, the simulation has been terminated",
+                    "(a) model(s) terminated with an error, pods are deleted",
+                    "(a) deployment(s) failed, the simulation has been terminated"
+                  ]
+                }
+              }
+            ],
+            "retry_interval_seconds": 2,
+            "maximum_wait_seconds": 86400
+          }
+        }
+      },
+      {
+        "id": "dots_runs_table",
+        "name": "Results overview",
+        "description": "",
+        "type": "table-external-model",
+        "config": {
+          "model_short_name": "dots",
+          "has_feedback_messages": false,
+          "result_animation": {
+            "filter_on_tag": {
+              "tag_name": "simulationRun",
+              "value_database_key": "model_job_id"
+            }
+          },
+          "result_external_link": {
+            "description": "Open Dashboard",
+            "value_database_key": "model_specific_output.dashboardURL"
+          },
+          "delete_result_url": "",
+          "load_input_esdl": true,
+          "time_series_xlsx_download": {
+            "filter_on_tag": {
+              "tag_name": "simulationRun",
+              "value_database_key": "model_job_id"
+            },
+            "esdl_object_name_field": "assetName",
+            "excel_sheets_per_table": [
+              {
+                "name_postfix": "PinW",
+                "field_name_recorded_per_esdl_object": "allocationPower",
+                "field_names_unrelated_to_esdl_objects": [
+                  "imbalancePower"
+                ],
+                "exclude_values": {
+                  "field_name": "capability",
+                  "values_to_exclude": [
+                    "Transport"
+                  ]
+                }
+              },
+              {
+                "name_postfix": "EinJ",
+                "field_name_recorded_per_esdl_object": "allocationEnergy",
+                "field_names_unrelated_to_esdl_objects": [
+                  "imbalanceEnergy"
+                ],
+                "exclude_values": {
+                  "field_name": "capability",
+                  "values_to_exclude": [
+                    "Transport"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        "data": {
+          "from_socket": {
+            "event": "get_external_model_runs_for_user",
+            "params": {
+              "external_model_name": "dots"
+            }
+          }
+        },
+        "with_jwt_token": true
+      }
+    ]
+  }
+]

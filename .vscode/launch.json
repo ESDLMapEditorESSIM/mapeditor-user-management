@@ -1,0 +1,17 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "main.py",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/src/mapeditor_user_management/main.py",
+            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}",
+            "justMyCode": true,
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}/src"
+            }
+        }
+    ]
+}
