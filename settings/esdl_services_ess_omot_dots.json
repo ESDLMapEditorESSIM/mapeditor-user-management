@@ -832,7 +832,7 @@
         },
         "data": {
           "from_url": {
-            "url": "http://esdl-validator:5000/schema"
+            "url": "http://esdl-validator:5000/schema?name=Optimizer%20validation%20schema&name=Simulator%20validation%20schema"
           },
           "to_state": {},
           "output_wrapper_variable": "schema"
