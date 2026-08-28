@@ -13,18 +13,19 @@
     },
     "workflow": [
       {
-        "id": "dowa_service",
+        "id": "dowa_service_composite",
         "type": "composite",
         "config": {
           "step_ids": [
-            "extra_service_options",
+            "dowa_year_selection",
+            "dowa_wake_effect_choice",
             "call_windturbine_service"
           ]
         },
-        "next_step": "dowa_service"
+        "next_step": "dowa_service_composite"
       },
       {
-        "id": "extra_service_options",
+        "id": "dowa_year_selection",
         "name": "",
         "type": "json-form2",
         "data": {
@@ -49,7 +50,35 @@
           },
           "to_state": {}
         },
-        "next_step": "dowa_service",
+        "next_step": "dowa_service_composite",
+        "next_step_trigger": "input_change"
+      },
+      {
+        "id": "dowa_wake_effect_choice",
+        "name": "",
+        "type": "json-form2",
+        "data": {
+          "from_config": {
+            "schema": {
+              "title": "",
+              "description": "Please give some additional configuration",
+              "type": "object",
+              "properties": {
+                "with_wake": {
+                  "title": "Include wake effects",
+                  "description": "Do you want to include wake effect in the wind profiles?",
+                  "type": "boolean",
+                  "default": true
+                }
+              },
+              "required": [
+                "with_wake"
+              ]
+            }
+          },
+          "to_state": {}
+        },
+        "next_step": "dowa_service_composite",
         "next_step_trigger": "input_change"
       },
       {
@@ -60,7 +89,8 @@
         "config": {
           "state_params": {
             "esdl": "esdl",
-            "year": "year"
+            "year": "year",
+            "with_wake": "with_wake"
           }
         },
         "service": {
@@ -86,6 +116,12 @@
               "description": "Year",
               "location": "body",
               "parameter_name": "year"
+            },
+            {
+              "name": "with_wake",
+              "description": "Include wake effects or not",
+              "location": "body",
+              "parameter_name": "with_wake"
             }
           ],
           "body": "json_text",
@@ -98,8 +134,8 @@
           "with_jwt_token": false,
           "state_params": true
         },
-        "previous_step": "extra_service_options",
-        "next_step": "dowa_service"
+        "previous_step": "dowa_year_selection",
+        "next_step": "dowa_service_composite"
       }
     ]
   }

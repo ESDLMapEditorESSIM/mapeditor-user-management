@@ -1,0 +1,87 @@
+{
+  "STANDARD_ASSETS": {
+    "standard": {
+      "Producer": [
+        "GeothermalSource",
+        "Import",
+        "PVInstallation",
+        "WindTurbine"
+      ],
+      "Consumer": [
+        "ElectricityDemand",
+        "Export",
+        "HeatingDemand"
+      ],
+      "Conversion": [
+        "CHP",
+        "GasHeater",
+        "HeatPump",
+        "PowerPlant",
+        "Electrolyzer"
+      ],
+      "Storage": [
+        "Battery",
+        "GasStorage",
+        "HeatStorage"
+      ],
+      "Transport": [
+        "Transformer"
+      ]
+    },
+    "ESSIM": {
+      "Producer": [
+        "GeothermalSource",
+        "Import",
+        "PVInstallation",
+        "WindTurbine"
+      ],
+      "Consumer": [
+        "ElectricityDemand",
+        "Export",
+        "HeatingDemand"
+      ],
+      "Conversion": [
+        "CHP",
+        "Electrolyzer",
+        "GasHeater",
+        "HeatPump",
+        "PowerPlant"
+      ],
+      "Storage": [
+        "Battery",
+        "GasStorage",
+        "HeatStorage"
+      ],
+      "Transport": [
+        "Transformer",
+        "Bus"
+      ]
+    },
+    "CHESS": {
+      "Producer": [
+        "GenericProducer",
+        "GeothermalSource",
+        "ResidualHeatSource"
+      ],
+      "Consumer": [
+        "GenericConsumer",
+        "HeatingDemand"
+      ],
+      "Storage": [
+        "HeatStorage"
+      ],
+      "Conversion": [
+        "GasHeater",
+        "HeatPump"
+      ],
+      "Transport": [
+        "Pipe",
+        "Pump",
+        "Valve",
+        "CheckValve",
+        "HeatExchange"
+      ]
+    }
+  },
+  "EDR_ASSETS": []
+}
