@@ -737,7 +737,9 @@
                 "esdl_encoding": "base64_encoded",
                 "status_mapping": {
                   "SUBMITTED": [
-                    "REGISTERED",
+                    "REGISTERED"
+                  ],
+                  "QUEUED": [
                     "ENQUEUED"
                   ],
                   "QUEUED": [

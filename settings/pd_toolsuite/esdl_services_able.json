@@ -550,8 +550,7 @@
           "from_state": {
             "selected_workflow_type": "selected_workflow_type"
           },
-          "to_state": {
-          },
+          "to_state": {},
           "output_wrapper_variable": "input_params_dict"
         },
         "next_step": "able_omotes_base_steps_with_table",

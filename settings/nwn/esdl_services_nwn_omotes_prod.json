@@ -48,7 +48,7 @@
       {
         "id": "omotes_select_workflow_type",
         "name": "",
-        "description": "Select the Omotes workflow type for the calculation:",
+        "description": "Select the workflow type:",
         "type": "select",
         "config": {
           "multiple": false,
@@ -59,7 +59,7 @@
         },
         "data": {
           "from_url": {
-            "url": "http://omotes-rest:9200/workflow/"
+            "url": "http://omotes-orchestrator:9200/workflow/"
           },
           "to_state": {},
           "output_wrapper_variable": "selected_workflow_type"
@@ -78,8 +78,7 @@
           "from_state": {
             "selected_workflow_type": "selected_workflow_type"
           },
-          "to_state": {
-          },
+          "to_state": {},
           "output_wrapper_variable": "input_params_dict"
         },
         "next_step": "omotes_base_steps_with_table",
@@ -105,7 +104,7 @@
             "User-Agent": "ESDL Mapeditor/1.0",
             "Content-Type": "application/json"
           },
-          "url": "http://omotes-rest:9200/job/",
+          "url": "http://omotes-orchestrator:9200/job/",
           "http_method": "post",
           "type": "send_esdl",
           "send_email_in_post_body_parameter": "user_name",
@@ -173,7 +172,7 @@
           "model_run_result_polling": {
             "query_list": [
               {
-                "url": "http://omotes-rest:9200/job/<MODEL_JOB_ID>",
+                "url": "http://omotes-orchestrator:9200/job/<MODEL_JOB_ID>",
                 "response_mapping": {
                   "status": "status",
                   "progress_fraction": "progress_fraction",
@@ -190,7 +189,9 @@
                 "esdl_encoding": "base64_encoded",
                 "status_mapping": {
                   "SUBMITTED": [
-                    "REGISTERED",
+                    "REGISTERED"
+                  ],
+                  "QUEUED": [
                     "ENQUEUED"
                   ],
                   "RUNNING": [
@@ -224,7 +225,7 @@
           "model_short_name": "omotes",
           "result_animation": {},
           "has_feedback_messages": true,
-          "delete_result_url": "http://omotes-rest:9200/job/<MODEL_JOB_ID>",
+          "delete_result_url": "http://omotes-orchestrator:9200/job/<MODEL_JOB_ID>",
           "load_input_esdl": true,
           "time_series_xlsx_download": {
             "esdl_object_name_field": "assetName",
@@ -457,8 +458,7 @@
               }
             ]
           },
-          "to_state": {
-          },
+          "to_state": {},
           "output_wrapper_variable": "chosen_aquifer_row"
         },
         "next_step_trigger": "input_change"
@@ -617,8 +617,7 @@
               }
             ]
           },
-          "to_state": {
-          },
+          "to_state": {},
           "output_wrapper_variable": "chosen_aquifer_row"
         },
         "next_step_trigger": "input_change"
@@ -691,30 +690,30 @@
     "explanation": "Download ESDL information as a geopackage file",
     "type": "esdl-service",
     "headers": {
-        "Accept": "application/esdl+xml",
-        "User-Agent": "ESDL Mapeditor/0.1"
+      "Accept": "application/esdl+xml",
+      "User-Agent": "ESDL Mapeditor/0.1"
     },
     "url": "http://esdl-geopackage:8310/api/convert/",
     "http_method": "post",
     "query_parameters": [],
     "body_config": {
-        "type": "json",
-        "parameters": [
-            {
-                "type": "esdl",
-                "parameter": "esdl",
-                "encoding": "base64_encoded"
-            }
-        ]
+      "type": "json",
+      "parameters": [
+        {
+          "type": "esdl",
+          "parameter": "esdl",
+          "encoding": "base64_encoded"
+        }
+      ]
     },
     "result": [
-        {
-            "action": "download_file",
-            "encoding": "base64_encoded",
-            "json_field": "gpkg",
-            "filename": "ESDL_information.gpkg",
-            "content_type": "application/x-sqlite3"
-        }
+      {
+        "action": "download_file",
+        "encoding": "base64_encoded",
+        "json_field": "gpkg",
+        "filename": "ESDL_information.gpkg",
+        "content_type": "application/x-sqlite3"
+      }
     ]
   }
 ]

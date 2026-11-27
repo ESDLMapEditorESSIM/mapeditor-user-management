@@ -13,6 +13,7 @@
           "step_ids": [
             "omotes_select_name",
             "omotes_select_workflow_type",
+            "omotes_workflow_version",
             "omotes_other_input_parameters",
             "omotes_start_run",
             "omotes_runs_table"
@@ -216,7 +217,9 @@
                 "esdl_encoding": "base64_encoded",
                 "status_mapping": {
                   "SUBMITTED": [
-                    "REGISTERED",
+                    "REGISTERED"
+                  ],
+                  "QUEUED": [
                     "ENQUEUED"
                   ],
                   "QUEUED": [

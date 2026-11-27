@@ -226,5 +226,7 @@ test-results.xml
 
 .env
 
+reports/
+
 # Debug logs
 logs/
