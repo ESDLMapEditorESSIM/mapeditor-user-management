@@ -12,6 +12,18 @@
             "env": {
                 "PYTHONPATH": "${workspaceFolder}/src"
             }
+        },
+        {
+            "name": "generate_config_report.py",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/src/mapeditor_user_management/generate_config_report.py",
+            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}",
+            "justMyCode": true,
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}/src"
+            }
         }
     ]
 }

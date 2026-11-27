@@ -55,6 +55,9 @@ coverage.xml
 *.mo
 *.pot
 
+# Generated reports
+reports/
+
 # Django stuff:
 *.log
 local_settings.py
@@ -222,6 +225,8 @@ unit_test_coverage/
 test-results.xml
 
 .env
+
+reports/
 
 # Debug logs
 logs/
